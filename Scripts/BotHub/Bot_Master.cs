@@ -8,7 +8,7 @@ namespace Bots
     {
         [SerializeField] GameObject testSlave;
 
-        [SerializeField] BotHub botHub;
+        BotHub botHub;
         void Start()
         {
             botHub = GameObject.Find("BotHub").GetComponent<BotHub>();

@@ -1,4 +1,6 @@
+using UnityEditor.EditorTools;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace Bots
 {
@@ -8,8 +10,13 @@ namespace Bots
         //
         //It shows who this bot is currently targeting in behavior.")]
 
-        [SerializeField] IBotMaster myMaster;
+        BotHub botHub;
+        IBotMaster myMaster; 
 
+        [Space]
+        [Header("Все эти скрипты должны лежать на GameObject со скриптом BotHub.\n\nAll this scripts should be on the GameObject with the BotHub script.")]
+        
+        [Space]
         [Space]
         [Tooltip("Скрипт, в который нужно будет написать всё, что должно быть подготовлено для работы бота." +
             "\n" +
@@ -26,9 +33,7 @@ namespace Bots
         [SerializeField] private BotComandInteract interactComandScript;
         [SerializeField] private BotComandAction actionComandScript;
 
-
-        [Space]
-        [SerializeField] BotHub botHub;
+        [ContextMenu("Reset The Value")]
 
 
         private void Start()
@@ -79,5 +84,6 @@ namespace Bots
         {
             myMaster = newMaster;
         }
+        
     }
 }

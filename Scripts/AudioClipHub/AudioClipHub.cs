@@ -12,6 +12,11 @@ namespace AudioClipHubNamespace
         [SerializeField] AudioClip[] fireAudioClips;
         [SerializeField] float maxDistanceOfSound = 30;
         [SerializeField] AudioRolloffMode rolloffMode;
+        private void Awake()
+        {
+            if (gameObject.name != "AudioClipHub")
+                gameObject.name = "AudioClipHub";
+        }
         public AudioSource GetOrCreateAudioSource(GameObject parentGameObject, string name)
         {
             // Try to get the audiosource.

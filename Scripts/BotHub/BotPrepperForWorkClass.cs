@@ -1,13 +1,14 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using Bots;
+using UnityEngine;
+using AudioClipHubNamespace;
+using UnityEngine.AI;
 
 public class BotPrepperForWorkClass : BotPrepperForWork
 {
-    public override void PrepperForWork(IBotSlave needsToBePrepared)
+    public override void PrepperForWork(BotAIBrain script, GameObject gamebject)
     {
-        throw new System.NotImplementedException();
+        gamebject.AddComponent<AudioClipHubSlayer>();
+        gamebject.AddComponent<NavMeshAgent>();
     }
 
     void Start()

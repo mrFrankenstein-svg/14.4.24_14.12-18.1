@@ -22,7 +22,13 @@ namespace Bots
 
     public abstract class BotPrepperForWork : MonoBehaviour
     {
-        public abstract void PrepperForWork(IBotSlave needsToBePrepared);
+        public abstract void PrepperForWork(BotAIBrain needsToBePreparedScript, GameObject needsToBePreparedGameobject);
+    }
+    public abstract class BotAIBrain : MonoBehaviour
+    {
+        public abstract void FollowComand(BotComandFollow followComand);
+        public abstract void InteractComand(BotComandInteract interactComand);
+        public abstract void ActionComand(BotComandAction ActionComand);
     }
     public abstract class BotComandFollow : MonoBehaviour
     {
@@ -66,12 +72,13 @@ namespace Bots
             delegateForSignedBots.Invoke(master, comand);
         }
         public void SlaveGetSettings(ref BotPrepperForWork setingsScript, ref BotComandFollow followScript,
-            ref BotComandInteract interactScript, ref BotComandAction actionScript)
+            ref BotComandInteract interactScript, ref BotComandAction actionScript, ref BotAIBrain botBrain)
         {
             setingsScript=GetComponent<BotPrepperForWork>();
             followScript=GetComponent<BotComandFollow>();
             interactScript=GetComponent<BotComandInteract>();
-            actionScript=GetComponent<BotComandAction>();
+            actionScript=GetComponent<BotComandAction>(); 
+            botBrain= GetComponent<BotAIBrain>();
         }
     }
 }

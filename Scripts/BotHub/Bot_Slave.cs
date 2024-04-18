@@ -14,19 +14,26 @@ namespace Bots
         IBotMaster myMaster; 
 
         [Space]
-        [Header("Все эти скрипты должны лежать на GameObject со скриптом BotHub.\n\nAll this scripts should be on the GameObject with the BotHub script.")]
+        [Header("  Все эти скрипты должны лежать на GameObject со скриптом BotHub.\n\n  All this scripts should be on the GameObject with the BotHub script.")]
         
         [Space]
         [Space]
         [Tooltip("Скрипт, в который нужно будет написать всё, что должно быть подготовлено для работы бота." +
-            "\n" +
+            "\n\n" +
             "A script in which you will need to write everything that needs to be prepared for the bot to work.")]
 
-        [SerializeField] private BotPrepperForWork prepperForWork;
-
+        [SerializeField] private BotPrepperForWork prepperForWork; 
+        
+        [Space]
+        [Space]
+        [Tooltip("Скрипт, который будет управлять логикой бота. Тут же должны быть созданы все поля, необходимые для работы бота." +
+            "\n\n" +
+            "A script that will control the logic of the bot. All the fields necessary for the Bot to work should be created here.")]
+        [SerializeField] private BotAIBrain brainOfBot;
+        [Space]
         [Space]
         [Tooltip("Сюда поставляются скрипты, а которых должно быть прописано поведение определённого типа, которое ожидается от бота." +
-            "\n" +
+            "\n\n" +
             "Scripts are supplied here, and which should specify the behavior of a certain type that is expected from the bot.")]
 
         [SerializeField] private BotComandFollow followComandScript;
@@ -44,8 +51,8 @@ namespace Bots
         }
         public void BotPrepperForWork()
         {
-            botHub.SlaveGetSettings(ref prepperForWork, ref followComandScript, ref interactComandScript,ref actionComandScript);
-            prepperForWork.PrepperForWork(this);
+            botHub.SlaveGetSettings(ref prepperForWork, ref followComandScript, ref interactComandScript,ref actionComandScript, ref brainOfBot);
+            prepperForWork.PrepperForWork(brainOfBot, gameObject);
         }
 
         public void BotBehaviorController(IBotMaster master, BotComands comand)

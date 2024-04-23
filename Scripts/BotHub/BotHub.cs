@@ -3,46 +3,51 @@ using UnityEngine;
 
 namespace Bots
 {
+    #region Interfaces, abstract clases and another stuff what we need for work
+
     public interface IBotSlave
     {
         void BotSubscribtorOnDelegate();
         void BotDescriptorOnDelegate();
-        void BotBehaviorController(IBotMaster master, BotComands comand);
+        void BotBehaviorController(IBotMaster master, object someValueForScript, BotComands comand);
         void BotPrepperForWork();
         void SetMaster(IBotMaster newMaster);
     }
     public interface IBotMaster
     {
-        void SetComandToBots(IBotMaster BotMaster, BotComands comand);
+        void SetComandToBots(IBotMaster botMaster, object someValueForScript, BotComands comand);
+        void BotPrepperForWork();
     }
 
-    //Абстрактные классы, от которых должны быть унаследованы Скрипты содержащие поведение ботов.
+    //Абстрактные классы, от которых должны быть унаследованы Скрипты содержащие поведение для Мастера.
     //
-    //Abstract classes from which Scripts containing bot behavior should be inherited.
-    
-    //вроде как это совсем не нужно, но посмотрим
-    //public abstract class BotPrepperForWork : MonoBehaviour
-    //{
-    //    public abstract void PrepperForWork(BotSlaveAIBrain needsToBePreparedScript, GameObject needsToBePreparedGameobject);
-    //}
+    //Abstract classes from which Scripts containing bot behavior for Master.
+
+    public abstract class BotMasterAIBrain : MonoBehaviour
+    {
+        public abstract void SetComandToIBotMaster(IBotMaster thisBotMaster, BotComands comand);
+    }
+
+
+    //Абстрактные классы, от которых должны быть унаследованы Скрипты содержащие поведение для Слейва.
+    //
+    //Abstract classes from which Scripts containing bot behavior for Slave.
+
     public abstract class BotSlaveAIBrain : MonoBehaviour
     {
         public abstract void PrepperForWork();
-        public abstract void FollowComand(BotComandFollow followComand);
-        public abstract void InteractComand(BotComandInteract interactComand);
-        public abstract void ActionComand(BotComandAction ActionComand);
     }
     public abstract class BotComandFollow : MonoBehaviour
     {
-        public abstract void FollowComand(IBotSlave waitingForCommand);
+        public abstract void FollowComand(BotSlaveAIBrain waitingForCommand, object gameObjectOrVector3ToFollow);
     }
     public abstract class BotComandInteract : MonoBehaviour
     {
-        public abstract void InteractComand(IBotSlave waitingForCommand);
+        public abstract void InteractComand(BotSlaveAIBrain waitingForCommand);
     }
     public abstract class BotComandAction : MonoBehaviour
     {
-        public abstract void ActionComand(IBotSlave waitingForCommand);
+        public abstract void ActionComand(BotSlaveAIBrain waitingForCommand);
     }
     public enum BotComands
     {
@@ -50,10 +55,13 @@ namespace Bots
         Interact,
         Action
     }
+    #endregion
 
     public class BotHub : MonoBehaviour
     {
-        [Header("Тут должны лежать скрипты, которые будут управлять работой всех ботов.\n\nThere should be scripts that will control the work of all bots.")]
+        #region Header and values 
+
+        [Header("Тут, тоесть на объекте с этим скриптом, \nдолжны лежать скрипты, которые будут\nуправлять работой всех ботов.\n\nOn objekt wiht this script should be scripts\nthat will control the work of all bots.")]
 
         [Space]
         [Space]
@@ -61,15 +69,8 @@ namespace Bots
             "\n\n" +
             "A script that will control the logic of the bot. All the fields necessary for the Bot to work should be created here.")]
         [SerializeField] private BotSlaveAIBrain brainOfSlaveBot;
+        [SerializeField] private BotMasterAIBrain brainOfMasterBot;
 
-        //[Space]
-        //[Space]
-        //[Tooltip("Скрипт, в который нужно будет написать всё, что должно быть подготовлено для работы бота." +
-        //    "\n\n" +
-        //    "A script in which you will need to write everything that needs to be prepared for the bot to work.")]
-        //[SerializeField] private BotPrepperForWork prepperForWork;
-
-        
         [Space]
         [Space]
         [Tooltip("Сюда поставляются скрипты, а которых должно быть прописано поведение определённого типа, которое ожидается от бота." +
@@ -78,13 +79,21 @@ namespace Bots
         [SerializeField] private BotComandFollow followComandScript;
         [SerializeField] private BotComandInteract interactComandScript;
         [SerializeField] private BotComandAction actionComandScript;
+        #endregion
 
-        public delegate void BotBehaviorDelegate(IBotMaster master, BotComands comand);
+        public delegate void BotBehaviorDelegate(IBotMaster master, object someValueForScript, BotComands comand);
         private static BotBehaviorDelegate delegateForSignedBots;
 
         void Awake()
         {
             gameObject.name = "BotHub";
+
+            brainOfSlaveBot= gameObject.GetComponent<BotSlaveAIBrain>();
+            brainOfMasterBot=gameObject.GetComponent<BotMasterAIBrain>();
+
+            followComandScript=gameObject.GetComponentInChildren<BotComandFollow>();
+            interactComandScript = gameObject.GetComponent<BotComandInteract>();
+            actionComandScript = gameObject.GetComponent<BotComandAction>();
         }
         public void BotDescriptor(BotBehaviorDelegate delegat)
         {
@@ -95,18 +104,23 @@ namespace Bots
         {
             delegateForSignedBots += delegat;
         }
-        public void Invoker(IBotMaster master, BotComands comand)
+        public void Invoker(IBotMaster master, object someValueForScript,BotComands comand)
         {
-            delegateForSignedBots.Invoke(master, comand);
+            delegateForSignedBots.Invoke(master, someValueForScript, comand);
         }
-        public void SlaveGetSettings( ref BotComandFollow followScript,
-            ref BotComandInteract interactScript, ref BotComandAction actionScript, ref BotSlaveAIBrain botBrain)
+        public void SlaveGetScripts( GameObject slaveGameobject, ref BotComandFollow followScript,
+            ref BotComandInteract interactScript, ref BotComandAction actionScript, ref BotSlaveAIBrain botSlaveBrain)
         {
             //setingsScript= prepperForWork;
             followScript=followComandScript;
             interactScript=interactComandScript;
             actionScript=actionComandScript; 
-            botBrain= brainOfSlaveBot;
+            botSlaveBrain= (BotSlaveAIBrain)slaveGameobject.AddComponent( brainOfSlaveBot.GetType() );
+        }
+        public void MasterGetScripts()
+        {
+            Debug.Log("НЕ забыть написать чё-нить в методе MasterGetScripts() в BotHub");
         }
     }
+
 }

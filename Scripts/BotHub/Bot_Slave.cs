@@ -12,7 +12,7 @@ namespace Bots
         //It shows who this bot is currently targeting in behavior.")]
 
         BotHub botHub;
-        IBotMaster myMaster; 
+        [SerializeField] IBotMaster myMaster; 
 
         //[Space]
         //[Space]
@@ -42,29 +42,29 @@ namespace Bots
         private void Start()
         {
             botHub = GameObject.Find("BotHub").GetComponent<BotHub>();
-            BotSubscribtorOnDelegate();
             BotPrepperForWork();
+            BotSubscribtorOnDelegate();
         }
         public void BotPrepperForWork()
         {
-            botHub.SlaveGetSettings( ref followComandScript, ref interactComandScript,ref actionComandScript, ref brainOfBot);
+            botHub.SlaveGetScripts(gameObject, ref followComandScript, ref interactComandScript,ref actionComandScript, ref brainOfBot);
             brainOfBot.PrepperForWork();
         }
 
-        public void BotBehaviorController(IBotMaster master, BotComands comand)
+        public void BotBehaviorController(IBotMaster master, object someValueForScript, BotComands comand)
         {
             if (master == myMaster)
             {
                 switch (comand)
                 {
                     case BotComands.Follow:
-                        followComandScript.FollowComand(this);
+                        followComandScript.FollowComand(brainOfBot, someValueForScript);
                         break;
                     case BotComands.Interact:
-                        interactComandScript.InteractComand(this);
+                        interactComandScript.InteractComand(brainOfBot);
                         break;
                     case BotComands.Action:
-                        actionComandScript.ActionComand(this);
+                        actionComandScript.ActionComand(brainOfBot);
                         break;
                     default:
                         Debug.LogError(this + " the bot cannot execute or execute the command " + comand);
@@ -87,6 +87,13 @@ namespace Bots
         {
             myMaster = newMaster;
         }
-        
+        /// <summary>
+        /// / its need only for BotHubGui script. Do not ues it. 
+        /// </summary>
+        public IBotMaster GetMaster()
+        {
+            return myMaster;
+        }
+
     }
 }

@@ -4,13 +4,27 @@ using System;
 using UnityEngine;
 
 using static ScriptHubUpdateFunction;
-
+public interface IScriptHubFunctions
+{
+    void ScriptHubUpdate();
+    void ScriptHubFixUpdate();
+    void StartFunction();
+}
+public enum ScriptHubUpdateFunction
+{
+    FunctionUpdate,
+    FunctionFixedUpdateEnum
+}
 
 public class ScriptHub : MonoBehaviour
 {
     public List<object> updateScripts = new List<object>();
     public List<object> fixUpdateScripts = new List<object>();
 
+    private void Awake()
+    {
+        gameObject.name = "ScriptHub";
+    }
 
     void Update()
     {
@@ -21,9 +35,9 @@ public class ScriptHub : MonoBehaviour
                 IScriptHubFunctions script = (IScriptHubFunctions)obj;
                 script.ScriptHubUpdate();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                Debug.Log(this.name + " ERORR WILE TRYING DO ScriptHubUpdate() ON" + obj);
+                Debug.Log(this.name + " ERORR WILE TRYING DO ScriptHubUpdate() ON" + obj + "\n\n\n" + e);
             }
         }
     }
@@ -36,9 +50,9 @@ public class ScriptHub : MonoBehaviour
                 IScriptHubFunctions script = (IScriptHubFunctions)obj;
                 script.ScriptHubFixUpdate();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                Debug.Log(this.name + " ERORR WILE TRYING DO ScriptHubFixUpdate() ON" + obj);
+                Debug.Log(this.name + " ERORR WILE TRYING DO ScriptHubFixUpdate() ON" + obj + "\n\n\n" + e);
             }
         }
     }

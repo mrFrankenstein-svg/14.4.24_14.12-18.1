@@ -5,28 +5,60 @@ using Bots;
 using UnityEngine.AI;
 using AudioClipHubNamespace;
 
-public class BotSlaveBrain : BotSlaveAIBrain
+using static ScriptHubUpdateFunction;
+
+public class BotSlaveBrain : BotSlaveAIBrain, IScriptHubFunctions
 {
-    [SerializeField] public NavMeshAgent navMeshAgent;
+    [SerializeField] Animator animator;
+    [SerializeField] NavMeshAgent navMeshAgent;
     [SerializeField] AudioClipHubSlayer audioClipHubSlayer;
+    [SerializeField] Renderer renderer;
+    [SerializeField] bool isStoped=true;
     public override void PrepperForWork()
     {
-        navMeshAgent = gameObject.AddComponent<NavMeshAgent>();
+        animator = GetComponent<Animator>();
+        renderer= GetComponent<Renderer>();
+
+        if (gameObject.GetComponent<NavMeshAgent>() == null)
+            navMeshAgent = gameObject.AddComponent<NavMeshAgent>();
+        else
+            navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
+
         audioClipHubSlayer = gameObject.AddComponent<AudioClipHubSlayer>();
-        Debug.Log("BotSlaveBrain  PrepperForWork закончился");
+
+        StartFunction();
+
+        Debug.Log("BotSlaveBrain PrepperForWork закончился");
     }
     public void NavMeshAgentMove(Vector3 moveTo)
     { 
-        navMeshAgent.Move(moveTo);
-    }
-
-    void Start()
-    {
-        
+        navMeshAgent.SetDestination(moveTo);
     }
 
     void Update()
     {
         
+    }
+
+    public void ScriptHubUpdate()
+    {
+        if (renderer.isVisible) 
+        {
+            if (!navMeshAgent.isStopped && isStoped!= navMeshAgent.isStopped)
+            {
+                animator.SetBool("run", !navMeshAgent.isStopped);
+                isStoped = navMeshAgent.isStopped;
+            }
+        }
+    }
+
+    public void ScriptHubFixUpdate()
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public void StartFunction()
+    {
+        FindObjectOfType<ScriptHub>().AddToScriptsList(this, FunctionUpdate);
     }
 }

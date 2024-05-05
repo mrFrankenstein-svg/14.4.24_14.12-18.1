@@ -14,7 +14,7 @@ public class BotHubGui : Editor
         Bot_Slave targ = (Bot_Slave)target;
         if (GUILayout.Button("Follow button"))
         {
-            targ.BotBehaviorController(targ.GetMaster(), new Vector3(0,0,0), BotComands.Follow);
+            targ.BotBehaviorController(targ.GetMaster(), GameObject.Find("Player").transform.position, BotComands.Follow);
         }
     }
 }

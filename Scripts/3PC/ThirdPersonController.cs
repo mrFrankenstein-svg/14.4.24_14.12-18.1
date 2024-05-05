@@ -188,6 +188,11 @@ public class ThirdPersonController : MonoBehaviour, IScriptHubFunctions
     public void StartFunction()
     {
         GameObject.Find("ScriptHub").GetComponent<ScriptHub>().AddToScriptsList(this, ScriptHubUpdateFunction.FunctionUpdate);
-        GameObject.Find("ScriptHub").GetComponent<ScriptHub>().AddToScriptsList(this, ScriptHubUpdateFunction.FunctionFixedUpdateEnum);
+        GameObject.Find("ScriptHub").GetComponent<ScriptHub>().AddToScriptsList(this, ScriptHubUpdateFunction.FunctionFixedUpdate);
+    }
+
+    public void ScriptHubOneSecondUpdate()
+    {
+        throw new NotImplementedException();
     }
 }

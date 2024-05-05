@@ -13,11 +13,15 @@ public class BotSlaveBrain : BotSlaveAIBrain, IScriptHubFunctions
     [SerializeField] NavMeshAgent navMeshAgent;
     [SerializeField] AudioClipHubSlayer audioClipHubSlayer;
     [SerializeField] Renderer renderer;
-    [SerializeField] bool isStoped=true;
+    [SerializeField] bool isHasPath = false;
     public override void PrepperForWork()
     {
         animator = GetComponent<Animator>();
-        renderer= GetComponent<Renderer>();
+
+        if(GetComponent<Renderer>() != null)
+            renderer= GetComponent<SkinnedMeshRenderer>();
+        else
+            renderer= GetComponentInChildren<SkinnedMeshRenderer>();
 
         if (gameObject.GetComponent<NavMeshAgent>() == null)
             navMeshAgent = gameObject.AddComponent<NavMeshAgent>();
@@ -35,21 +39,17 @@ public class BotSlaveBrain : BotSlaveAIBrain, IScriptHubFunctions
         navMeshAgent.SetDestination(moveTo);
     }
 
-    void Update()
-    {
-        
-    }
-
     public void ScriptHubUpdate()
     {
         if (renderer.isVisible) 
         {
-            if (!navMeshAgent.isStopped && isStoped!= navMeshAgent.isStopped)
+            if (isHasPath != navMeshAgent.hasPath)
             {
-                animator.SetBool("run", !navMeshAgent.isStopped);
-                isStoped = navMeshAgent.isStopped;
+                animator.SetBool("run", navMeshAgent.hasPath);
+                isHasPath = navMeshAgent.hasPath;
             }
         }
+
     }
 
     public void ScriptHubFixUpdate()
@@ -60,5 +60,10 @@ public class BotSlaveBrain : BotSlaveAIBrain, IScriptHubFunctions
     public void StartFunction()
     {
         FindObjectOfType<ScriptHub>().AddToScriptsList(this, FunctionUpdate);
+    }
+
+    public void ScriptHubOneSecondUpdate()
+    {
+        throw new System.NotImplementedException();
     }
 }

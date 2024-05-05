@@ -1,33 +1,27 @@
 using Bots;
 using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+using static ScriptHubUpdateFunction;
 
 namespace Bots
 {
-    public class Bot_Master : MonoBehaviour, IBotMaster
+    public class Bot_Master : MonoBehaviour, IBotMaster, IScriptHubFunctions
     {
         //тестовый обьект с  тестовым слейвом
-        [SerializeField] GameObject testSlave;
+        [SerializeField] List<GameObject> testSlave;
 
         BotHub botHub;
         void Start()
         {
             //это ваще всё ненужно
             botHub = GameObject.Find("BotHub").GetComponent<BotHub>();
-            testSlave.GetComponent<Bot_Slave>().SetMaster(this);
+            testSlave[0].GetComponent<Bot_Slave>().SetMaster(this);
+
+            StartFunction();
 
             BotPrepperForWork();
-            //StartCoroutine(time());
         }
-        //IEnumerator time()
-        //{ 
-        //    yield return new WaitForSeconds(0.1f);
-
-        //    for (int i = 0; i < 3; i++)
-        //    {
-        //        SetComandToBots(this, (BotComands)i);
-        //    }
-        //}
         public void SetComandToBots(IBotMaster botMaster, object someValueForScript, BotComands comand)
         {
             botHub.Invoker(botMaster, someValueForScript,comand);
@@ -36,6 +30,25 @@ namespace Bots
         public void BotPrepperForWork()
         {
             Debug.Log("Написать чё-нить");
+        }
+
+        public void ScriptHubUpdate()
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public void ScriptHubFixUpdate()
+        {
+            throw new System.NotImplementedException();
+        }
+        public void StartFunction()
+        {
+            FindObjectOfType<ScriptHub>().AddToScriptsList(this, FunctionOneSecondUpdate);
+        }
+
+        public void ScriptHubOneSecondUpdate()
+        {
+            SetComandToBots(this, gameObject, BotComands.Follow);
         }
     }
 }

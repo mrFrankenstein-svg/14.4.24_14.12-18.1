@@ -8,22 +8,29 @@ public interface IScriptHubFunctions
 {
     void ScriptHubUpdate();
     void ScriptHubFixUpdate();
+    void ScriptHubOneSecondUpdate();
     void StartFunction();
 }
 public enum ScriptHubUpdateFunction
 {
     FunctionUpdate,
-    FunctionFixedUpdateEnum
+    FunctionFixedUpdate,
+    FunctionOneSecondUpdate
 }
 
 public class ScriptHub : MonoBehaviour
 {
-    public List<object> updateScripts = new List<object>();
-    public List<object> fixUpdateScripts = new List<object>();
+    [SerializeField] List<object> updateScripts = new List<object>();
+    [SerializeField] List<object> fixUpdateScripts = new List<object>();
+    [SerializeField] List<object> oneSecondUpdate=new List<object>();
 
     private void Awake()
     {
         gameObject.name = "ScriptHub";
+    }
+    private void Start()
+    {
+        StartCoroutine(OncePerSecond());
     }
 
     void Update()
@@ -37,7 +44,7 @@ public class ScriptHub : MonoBehaviour
             }
             catch (Exception e)
             {
-                Debug.Log(this.name + " ERORR WILE TRYING DO ScriptHubUpdate() ON" + obj + "\n\n\n" + e);
+                Debug.Log(this.name + " ERORR WILE TRYING DO ScriptHubUpdate() ON" + obj + "\n\n" + e);
             }
         }
     }
@@ -56,20 +63,50 @@ public class ScriptHub : MonoBehaviour
             }
         }
     }
+    IEnumerator OncePerSecond()
+    {
+        while (true)
+        {
+            yield return new WaitForSecondsRealtime(1f);
+
+            foreach (object obj in oneSecondUpdate)
+            {
+                try
+                {
+                    IScriptHubFunctions script = (IScriptHubFunctions)obj;
+                    script.ScriptHubOneSecondUpdate();
+                }
+                catch (Exception e)
+                {
+                    Debug.Log(this.name + " ERORR WILE TRYING DO OncePerSecond() ON " + obj + "\n\n\n" + e);
+                }
+            }
+        }
+    }
     public void AddToScriptsList(object script, ScriptHubUpdateFunction updateFunction)
     {
-        //Debug.Log(script);
+        switch (updateFunction)
+        {
+            case FunctionUpdate:
+                if (!updateScripts.Contains(script))
+                    updateScripts.Add(script);
+                break;
 
-        if (updateFunction == FunctionUpdate)
-        {
-            if (!updateScripts.Contains(script))
-                updateScripts.Add(script);
+            case FunctionFixedUpdate:
+                if (!fixUpdateScripts.Contains(script))
+                    fixUpdateScripts.Add(script);
+                break;
+
+            case FunctionOneSecondUpdate:
+                if(!oneSecondUpdate.Contains(script))
+                    oneSecondUpdate.Add(script);
+                break;
+
+            default:
+                Debug.LogError("ScriptHub AddToScriptsList() error.");
+                break;
         }
-        else
-        {
-            if (!fixUpdateScripts.Contains(script))
-                fixUpdateScripts.Add(script);
-        }
+
     }
     public void RemoveFromUScriptsList(object script)
     {
@@ -77,5 +114,7 @@ public class ScriptHub : MonoBehaviour
             updateScripts.Remove(script);
         if (fixUpdateScripts.Contains(script))
             fixUpdateScripts.Remove(script);
+        if (oneSecondUpdate.Contains(script))
+            oneSecondUpdate.Remove(script);
     }
 }

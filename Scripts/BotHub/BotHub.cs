@@ -25,7 +25,7 @@ namespace Bots
 
     public abstract class BotMasterAIBrain : MonoBehaviour
     {
-        public abstract void SetComandToIBotMaster(IBotMaster thisBotMaster, BotComands comand);
+        public abstract void SetComandToIBotMaster(IBotMaster thisBotMaster,  BotComands comand, IBotSlave definiteBot= null);
     }
 
 
@@ -104,6 +104,9 @@ namespace Bots
         {
             delegateForSignedBots += delegat;
         }
+        /// <summary>
+        /// Начинает выполнение функций в делегате.___Starts executing functions in the delegate.
+        /// </summary>
         public void Invoker(IBotMaster master, object someValueForScript,BotComands comand)
         {
             delegateForSignedBots.Invoke(master, someValueForScript, comand);

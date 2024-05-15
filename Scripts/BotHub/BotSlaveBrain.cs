@@ -54,6 +54,7 @@ public class BotSlaveBrain : BotSlaveAIBrain, IScriptHubFunctions
 
     public void ScriptHubFixUpdate()
     {
+        //это не нужно но обязано тут быть
         throw new System.NotImplementedException();
     }
 
@@ -64,6 +65,7 @@ public class BotSlaveBrain : BotSlaveAIBrain, IScriptHubFunctions
 
     public void ScriptHubOneSecondUpdate()
     {
+        //это не нужно но обязано тут быть
         throw new System.NotImplementedException();
     }
 }

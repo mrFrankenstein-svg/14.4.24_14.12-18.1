@@ -3,6 +3,9 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using static ScriptHubUpdateFunction;
+using Unity.VisualScripting;
+using TMPro;
+using System.Runtime.InteropServices;
 
 namespace Bots
 {
@@ -30,9 +33,9 @@ namespace Bots
             //поставил сюда чисто для теста
             CalculateRadiusForFollowingPoints();
         }
-        public void SetComandToBots(IBotMaster botMaster, object someValueForScript, BotComands comand)
+        public void SetComandToBots(IBotMaster botMaster, object someValueForScript, BotComands comand,IBotSlave definiteBot = null)
         {
-            botHub.Invoker(botMaster, someValueForScript, comand);
+            botHub.Invoker(botMaster, someValueForScript, comand, definiteBot);
         }
 
         public void BotPrepperForWork()
@@ -64,29 +67,58 @@ namespace Bots
 
         public void ScriptHubOneSecondUpdate()
         {
-            SetComandToBots(this, gameObject, BotComands.Follow);
-            //CalculateRadiusForFollowingPoints();
+            //это я сейчас быстро накатяю чтоб проверить как работает цикл отправкикоманды отдельному боту
+            //и вычисления его вектора 3
+            CalculateRadiusForFollowingPoints();
+            for (int i = 0; i < slaveList.Count; i++)
+            {
+                SetComandToBots(this, followPointsPoints[i], BotComands.Follow, slaveList[i].GetComponent<Bot_Slave>());
+            }
+            
         }
         /// <summary>
-        /// Эта функция будет вычислять точки следования за объектом.___This function will calculate the points of following the object.
+        /// Эта функция будет вычислять точки следования за объектом.___
+        /// This function will calculate the points of following the object.
         /// </summary>
         private void CalculateRadiusForFollowingPoints()
         {
+            followPointsPoints.Clear();
             float angleStep = 360f / slaveList.Count;
-
             for (int i = 0; i < slaveList.Count; i++)
             {
                 float angle = i * angleStep;
-                followPointsPoints.Add( new Vector3(gameObject.transform.position.x + 3 * Mathf.Cos(angle * Mathf.Deg2Rad),
+                followPointsPoints.Add(new Vector3(gameObject.transform.position.x + 3 * Mathf.Cos(angle * Mathf.Deg2Rad),
                                                gameObject.transform.position.y,
                                                gameObject.transform.position.z + 3 * Mathf.Sin(angle * Mathf.Deg2Rad)));
-
-                //GameObject obj= Instantiate(GameObject.CreatePrimitive(PrimitiveType.Cube), position, Quaternion.identity);
+            }
+            //if(slaveList.Count <= 24)
+        }
+        private void CalculateRadiusForFollowingPoints2TEST()
+        {
+            followPointsPoints.Clear();
+            int slavesCount= slaveList.Count;
+            for (int i = 0; ; i++)
+            {
+                float distanceFromMaster = i * 3;
+                if (slavesCount > 6 && i==0)
+                {
+                    ;KerningPairKey;LayoutKind;l
+                    float angleStep = 360f / 6;
+                    sss(angleStep, 6, distanceFromMaster);
+                    slavesCount= slavesCount - 6;
+                    continue;
+                }
             }
         }
-        public void GetPointForeSlaveFolowing()
+        private void sss(float angleStep, int tackts,float distanceFromCenter)
         {
-            Я добававил в скрипт возможность конкретного укзания бота. Надо этим воспользоватся для указания точки для следования
+            for (int i = 0; i < slaveList.Count; i++)
+            {
+                float angle = i * angleStep;
+                followPointsPoints.Add(new Vector3(gameObject.transform.position.x + distanceFromCenter * Mathf.Cos(angle * Mathf.Deg2Rad),
+                                               gameObject.transform.position.y,
+                                               gameObject.transform.position.z + distanceFromCenter * Mathf.Sin(angle * Mathf.Deg2Rad)));
+            }
         }
     }
 }

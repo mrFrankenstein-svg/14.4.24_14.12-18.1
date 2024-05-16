@@ -51,25 +51,26 @@ namespace Bots
             brainOfBot.PrepperForWork();
         }
 
-        public void BotBehaviorController(IBotMaster master, object someValueForScript, BotComands comand)
+        public void BotBehaviorController(IBotMaster master, object someValueForScript, BotComands comand, IBotSlave definiteBot)
         {
             if (master == myMaster)
             {
-                switch (comand)
-                {
-                    case BotComands.Follow:
-                        followComandScript.FollowComand(brainOfBot, someValueForScript);
-                        break;
-                    case BotComands.Interact:
-                        interactComandScript.InteractComand(brainOfBot);
-                        break;
-                    case BotComands.Action:
-                        actionComandScript.ActionComand(brainOfBot);
-                        break;
-                    default:
-                        Debug.LogError(this + " the bot cannot execute or execute the command " + comand);
-                        break;
-                }
+                if(definiteBot==null || definiteBot== this)
+                    switch (comand)
+                    {
+                        case BotComands.Follow:
+                            followComandScript.FollowComand(brainOfBot, someValueForScript);
+                            break;
+                        case BotComands.Interact:
+                            interactComandScript.InteractComand(brainOfBot);
+                            break;
+                        case BotComands.Action:
+                            actionComandScript.ActionComand(brainOfBot);
+                            break;
+                        default:
+                            Debug.LogError(this + " the bot cannot execute or execute the command " + comand);
+                            break;
+                    }
             }
         }
 

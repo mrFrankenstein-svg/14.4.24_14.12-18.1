@@ -12,7 +12,8 @@ namespace Bots
         //It shows who this bot is currently targeting in behavior.")]
 
         BotHub botHub;
-        [SerializeField] IBotMaster myMaster; 
+        [SerializeField] IBotMaster myMaster;
+        [SerializeField] private int numberOfBotInList;
 
         //[Space]
         //[Space]
@@ -21,7 +22,7 @@ namespace Bots
         //    "A script in which you will need to write everything that needs to be prepared for the bot to work.")]
 
         //[SerializeField] private BotPrepperForWork prepperForWork; 
-        
+
         [Space]
         [Space]
         [Tooltip("Скрипт, который будет управлять логикой бота. Тут же должны быть созданы все поля, необходимые для работы бота." +
@@ -47,30 +48,29 @@ namespace Bots
         }
         public void BotPrepperForWork()
         {
-            botHub.SlaveGetScripts(gameObject, ref followComandScript, ref interactComandScript,ref actionComandScript, ref brainOfBot);
+            botHub.SlaveGetScripts(gameObject, ref followComandScript, ref interactComandScript, ref actionComandScript, ref brainOfBot);
             brainOfBot.PrepperForWork();
         }
 
-        public void BotBehaviorController(IBotMaster master, object someValueForScript, BotComands comand, IBotSlave definiteBot)
+        public void BotBehaviorController(IBotMaster master, BotComands comand, params object[] someValueForScript)
         {
             if (master == myMaster)
             {
-                if(definiteBot==null || definiteBot== this)
-                    switch (comand)
-                    {
-                        case BotComands.Follow:
-                            followComandScript.FollowComand(brainOfBot, someValueForScript);
-                            break;
-                        case BotComands.Interact:
-                            interactComandScript.InteractComand(brainOfBot);
-                            break;
-                        case BotComands.Action:
-                            actionComandScript.ActionComand(brainOfBot);
-                            break;
-                        default:
-                            Debug.LogError(this + " the bot cannot execute or execute the command " + comand);
-                            break;
-                    }
+                switch (comand)
+                {
+                    case BotComands.Follow:
+                        followComandScript.FollowComand(brainOfBot,numberOfBotInList, someValueForScript);
+                        break;
+                    case BotComands.Interact:
+                        interactComandScript.InteractComand(brainOfBot);
+                        break;
+                    case BotComands.Action:
+                        actionComandScript.ActionComand(brainOfBot);
+                        break;
+                    default:
+                        Debug.LogError(this + " the bot cannot execute or execute the command " + comand);
+                        break;
+                }
             }
         }
 
@@ -84,12 +84,14 @@ namespace Bots
             botHub.BotSubscribtor(BotBehaviorController);
         }
 
-        public void SetMaster(IBotMaster newMaster)
+        public void SetMasterAndNumberOfThisBotInList(IBotMaster newMaster, int numberOfThisBotInList)
         {
             myMaster = newMaster;
+            numberOfBotInList = numberOfThisBotInList;
         }
         /// <summary>
         /// / its need only for BotHubGui script. Do not ues it. 
+        /// он нужен только для скрипта BotHubGui. Не используйте его.
         /// </summary>
         public IBotMaster GetMaster()
         {

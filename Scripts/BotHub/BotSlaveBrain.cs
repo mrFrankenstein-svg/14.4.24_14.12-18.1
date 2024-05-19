@@ -6,6 +6,7 @@ using UnityEngine.AI;
 using AudioClipHubNamespace;
 
 using static ScriptHubUpdateFunction;
+using TMPro;
 
 public class BotSlaveBrain : BotSlaveAIBrain, IScriptHubFunctions
 {
@@ -34,9 +35,20 @@ public class BotSlaveBrain : BotSlaveAIBrain, IScriptHubFunctions
 
         Debug.Log("BotSlaveBrain PrepperForWork закончился");
     }
-    public void NavMeshAgentMove(Vector3 moveTo)
-    { 
-        navMeshAgent.SetDestination(moveTo);
+    public bool NavMeshAgentMove(Vector3 moveTo)
+    {
+        NavMeshPath path= new NavMeshPath();
+        navMeshAgent.CalculatePath(moveTo, path);
+        if (PathStatus(path) == true)
+        {
+            navMeshAgent.SetPath(path);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+        //navMeshAgent.SetDestination(moveTo);
     }
 
     public void ScriptHubUpdate()
@@ -67,5 +79,12 @@ public class BotSlaveBrain : BotSlaveAIBrain, IScriptHubFunctions
     {
         //это не нужно но обязано тут быть
         throw new System.NotImplementedException();
+    }
+    public bool PathStatus(NavMeshPath pathThatNeedetStatus)
+    {
+        if (pathThatNeedetStatus.status == NavMeshPathStatus.PathComplete)
+            return true;
+        else
+            return false;
     }
 }

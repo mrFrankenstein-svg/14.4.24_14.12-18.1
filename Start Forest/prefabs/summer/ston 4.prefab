@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 400000}
   - component: {fileID: 3300000}
   - component: {fileID: 2300000}
-  - component: {fileID: 7372941017632082759}
+  - component: {fileID: -1312117828466130701}
   m_Layer: 5
   m_Name: ston 4
   m_TagString: Do not touch
@@ -84,8 +84,8 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &7372941017632082759
-MeshCollider:
+--- !u!65 &-1312117828466130701
+BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -94,7 +94,6 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 1
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 4300018, guid: 83af1bee35c78c04d88801fe774acabb, type: 3}
+  serializedVersion: 2
+  m_Size: {x: 13.099362, y: 13.999083, z: 2.2044666}
+  m_Center: {x: 0.5255246, y: -0.03720618, z: 0.44143513}

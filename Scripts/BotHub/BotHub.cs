@@ -9,13 +9,13 @@ namespace Bots
     {
         void BotSubscribtorOnDelegate();
         void BotDescriptorOnDelegate();
-        void BotBehaviorController(IBotMaster master, object someValueForScript, BotComands comand, IBotSlave definiteBot);
+        void BotBehaviorController(IBotMaster master, BotComands comand, params object[] someValueForScript);
         void BotPrepperForWork();
-        void SetMaster(IBotMaster newMaster);
+        void SetMasterAndNumberOfThisBotInList(IBotMaster newMaster, int numberOfThisBotInList);
     }
     public interface IBotMaster
     {
-        void SetComandToBots(IBotMaster botMaster, object someValueForScript, BotComands comand, IBotSlave definiteBot = null);
+        void SetComandToBots(IBotMaster botMaster, BotComands comand, params object[] someValueForScript);
         void BotPrepperForWork();
     }
 
@@ -44,7 +44,7 @@ namespace Bots
         /// </summary>
         /// <param name="waitingForCommand">Бот который выполнит команду.___The bot that executes the command</param>
         /// <param name="gameObjectOrVector3ToFollow">Сюда должны быть отправлены Vector3 или GameObject к которым нужно двигаться.__Vector3 or GameObject should be sent here to which you need to move.</param>
-        public abstract void FollowComand(BotSlaveAIBrain waitingForCommand, object gameObjectOrVector3ToFollow);
+        public abstract void FollowComand(BotSlaveAIBrain waitingForCommand, int indexOfThisBot, params object[] gameObjectOrVector3ToFollow);
     }
     public abstract class BotComandInteract : MonoBehaviour
     {
@@ -86,7 +86,7 @@ namespace Bots
         [SerializeField] private BotComandAction actionComandScript;
         #endregion
 
-        public delegate void BotBehaviorDelegate(IBotMaster master, object someValueForScript, BotComands comand, IBotSlave definiteBot);
+        public delegate void BotBehaviorDelegate(IBotMaster master,  BotComands comand, params object[] someValueForScript);
         private static BotBehaviorDelegate delegateForSignedBots;
 
         void Awake()
@@ -112,9 +112,9 @@ namespace Bots
         /// <summary>
         /// Начинает выполнение функций в делегате.___Starts executing functions in the delegate.
         /// </summary>
-        public void Invoker(IBotMaster master, object someValueForScript,BotComands comand, IBotSlave definiteBot)
+        public void Invoker(IBotMaster master, BotComands comand, params object[] someValueForScript)
         {
-            delegateForSignedBots.Invoke(master, someValueForScript, comand, definiteBot);
+            delegateForSignedBots.Invoke(master, comand, someValueForScript);
         }
         public void SlaveGetScripts( GameObject slaveGameobject, ref BotComandFollow followScript,
             ref BotComandInteract interactScript, ref BotComandAction actionScript, ref BotSlaveAIBrain botSlaveBrain)

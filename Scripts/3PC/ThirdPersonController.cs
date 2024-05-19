@@ -1,4 +1,5 @@
 ﻿using System;
+using Unity.VisualScripting;
 using UnityEngine;
 
 /*
@@ -31,7 +32,7 @@ public class ThirdPersonController : MonoBehaviour, IScriptHubFunctions
     [Tooltip("This is not a setting option.The parameter just shows Vector3 points for the camera and does not set anything.")]
     [SerializeField] Vector3 cameraPsition;
     [SerializeField] GameObject cameraPsitionGameobject;
-    [SerializeField] float cameraExtendingMultiplier=10;
+    [SerializeField] float cameraExtendingMultiplier=100;
 
     // Player states
     bool isSprinting = false;
@@ -155,21 +156,25 @@ public class ThirdPersonController : MonoBehaviour, IScriptHubFunctions
     }
     void UploadingCameraPsition(Vector3 moviment)
     {
+        //float Multiplier;
+        //if(cameraExtendingMultiplier)
         float x = Math.Abs(moviment.x);
         float z = Math.Abs(moviment.z);
         float Z;
+        float Y=0;
 
         if (z > x)
         {
             if (moviment.z < 0)
-                Z = z * 1.15f;
+                Z = z * 1.2f;
             else
-                Z = z * 0.85f;
+                Z = z * 0.8f;
         }
         else
             Z = x;
+            Y = Z * 0.75f;
 
-        cameraPsition = new Vector3(0, 1, Z * cameraExtendingMultiplier);
+        cameraPsition = new Vector3(0, Y * cameraExtendingMultiplier, Z * cameraExtendingMultiplier);
         cameraPsitionGameobject.transform.localPosition = cameraPsition;
     }
     public bool IsSprinting()
@@ -187,12 +192,35 @@ public class ThirdPersonController : MonoBehaviour, IScriptHubFunctions
 
     public void StartFunction()
     {
-        GameObject.Find("ScriptHub").GetComponent<ScriptHub>().AddToScriptsList(this, ScriptHubUpdateFunction.FunctionUpdate);
-        GameObject.Find("ScriptHub").GetComponent<ScriptHub>().AddToScriptsList(this, ScriptHubUpdateFunction.FunctionFixedUpdate);
+        ScriptHub hub = GameObject.Find("ScriptHub").GetComponent<ScriptHub>();
+        hub.AddToScriptsList(this, ScriptHubUpdateFunction.FunctionUpdate);
+        hub.AddToScriptsList(this, ScriptHubUpdateFunction.FunctionFixedUpdate);
+        //hub.AddToScriptsList(this, ScriptHubUpdateFunction.FunctionOneSecondUpdate);
     }
 
     public void ScriptHubOneSecondUpdate()
     {
-        throw new NotImplementedException();
+        //CameraExtendingMultiplierCalculating(10);
+        //throw new NotImplementedException();
+    }
+    public void CameraExtendingMultiplierCalculating( int numberOfSteps)
+    {
+        if (numberOfSteps > 0)
+        {
+            for (int i = 0; i < numberOfSteps; i++)
+            {
+                float number;
+                number = 1- cameraExtendingMultiplier/1000;
+                cameraExtendingMultiplier = cameraExtendingMultiplier + number;
+            }
+        }
+        else
+        {
+            numberOfSteps= numberOfSteps * -1;
+            for (int i = 0; i < numberOfSteps; i++)
+            {
+                cameraExtendingMultiplier = cameraExtendingMultiplier - (2 / (1 + Math.Abs(cameraExtendingMultiplier)));
+            }
+        }
     }
 }

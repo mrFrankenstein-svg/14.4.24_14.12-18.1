@@ -32,7 +32,7 @@ public class ThirdPersonController : MonoBehaviour, IScriptHubFunctions
     [Tooltip("This is not a setting option.The parameter just shows Vector3 points for the camera and does not set anything.")]
     [SerializeField] Vector3 cameraPsition;
     [SerializeField] GameObject cameraPsitionGameobject;
-    [SerializeField] float cameraExtendingMultiplier=100;
+    [SerializeField] float cameraExtendingMultiplier = 100;
 
     // Player states
     bool isSprinting = false;
@@ -74,27 +74,27 @@ public class ThirdPersonController : MonoBehaviour, IScriptHubFunctions
         inputCrouch = Input.GetKeyDown(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.JoystickButton1);
 
         // Check if you pressed the crouch input key and change the player's state
-        if ( inputCrouch )
+        if (inputCrouch)
             isCrouching = !isCrouching;
 
         // Run and Crouch animation
         // If dont have animator component, this block wont run
-        if ( cc.isGrounded && animator != null )
+        if (cc.isGrounded && animator != null)
         {
             // Run
             float minimumSpeed = 0.9f;
-            animator.SetBool("run", cc.velocity.magnitude > minimumSpeed );
+            animator.SetBool("run", cc.velocity.magnitude > minimumSpeed);
 
             // Sprint
             isSprinting = cc.velocity.magnitude > minimumSpeed && inputSprint;
-            if (isSprinting && !previosIsSprinting) 
+            if (isSprinting && !previosIsSprinting)
             {
                 animator.SetFloat("SprintMultiplayer", 1.25f);
                 previosIsSprinting = isSprinting;
             }
             if (!isSprinting && previosIsSprinting)
             {
-                animator.SetFloat("SprintMultiplayer", 1.0f); 
+                animator.SetFloat("SprintMultiplayer", 1.0f);
                 previosIsSprinting = isSprinting;
             }
         }
@@ -118,7 +118,7 @@ public class ThirdPersonController : MonoBehaviour, IScriptHubFunctions
             float directionX = inputHorizontal * (velocity + velocityAdittion) * Time.deltaTime;
             float directionZ = inputVertical * (velocity + velocityAdittion) * Time.deltaTime;
             // Add gravity to Y axis
-            float directionY = 0- gravity * Time.deltaTime;
+            float directionY = 0 - gravity * Time.deltaTime;
 
 
             // --- Character rotation --- 
@@ -156,23 +156,22 @@ public class ThirdPersonController : MonoBehaviour, IScriptHubFunctions
     }
     void UploadingCameraPsition(Vector3 moviment)
     {
-        //float Multiplier;
-        //if(cameraExtendingMultiplier)
         float x = Math.Abs(moviment.x);
         float z = Math.Abs(moviment.z);
         float Z;
-        float Y=0;
+        float Y;
+        Debug.Log("x= " + moviment.x + " z= " + moviment.z);
 
         if (z > x)
         {
             if (moviment.z < 0)
-                Z = z * 1.2f;
+                Z = z * 1.2f;cxvxcvxcv
             else
-                Z = z * 0.8f;
+                Z = z * 0.6f;
         }
         else
             Z = x;
-            Y = Z * 0.75f;
+        Y = Z * 0.4f;
 
         cameraPsition = new Vector3(0, Y * cameraExtendingMultiplier, Z * cameraExtendingMultiplier);
         cameraPsitionGameobject.transform.localPosition = cameraPsition;
@@ -195,32 +194,34 @@ public class ThirdPersonController : MonoBehaviour, IScriptHubFunctions
         ScriptHub hub = GameObject.Find("ScriptHub").GetComponent<ScriptHub>();
         hub.AddToScriptsList(this, ScriptHubUpdateFunction.FunctionUpdate);
         hub.AddToScriptsList(this, ScriptHubUpdateFunction.FunctionFixedUpdate);
-        //hub.AddToScriptsList(this, ScriptHubUpdateFunction.FunctionOneSecondUpdate);
+        hub.AddToScriptsList(this, ScriptHubUpdateFunction.FunctionOneSecondUpdate);
     }
 
     public void ScriptHubOneSecondUpdate()
     {
-        //CameraExtendingMultiplierCalculating(10);
+        CameraExtendingMultiplierCalculating(10);
         //throw new NotImplementedException();
     }
-    public void CameraExtendingMultiplierCalculating( int numberOfSteps)
+    public void CameraExtendingMultiplierCalculating(int numberOfSteps)
     {
-        if (numberOfSteps > 0)
+        int tackts;
+        float number;
+        if (numberOfSteps < 0)
         {
-            for (int i = 0; i < numberOfSteps; i++)
-            {
-                float number;
-                number = 1- cameraExtendingMultiplier/1000;
-                cameraExtendingMultiplier = cameraExtendingMultiplier + number;
-            }
+            tackts = numberOfSteps * -1;
+            number = -1;
         }
         else
         {
-            numberOfSteps= numberOfSteps * -1;
-            for (int i = 0; i < numberOfSteps; i++)
-            {
-                cameraExtendingMultiplier = cameraExtendingMultiplier - (2 / (1 + Math.Abs(cameraExtendingMultiplier)));
-            }
+            tackts = numberOfSteps;
+            number = 1;
         }
+
+        for (int i = 0; i < tackts; i++)
+        {
+            if(cameraExtendingMultiplier>=100 && cameraExtendingMultiplier<=200)
+                cameraExtendingMultiplier = cameraExtendingMultiplier + number;
+        }
+
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using Unity.VisualScripting;
 using UnityEngine;
+using static SetingsValuses;
 
 /*
     This file has a commented version with details about how each line works. 
@@ -160,33 +161,23 @@ public class ThirdPersonController : MonoBehaviour, IScriptHubFunctions
         float z = Math.Abs(moviment.z);
         float Z;
         float Y;
-        Debug.Log("x= " + moviment.x + " z= " + moviment.z);
 
-        if (z > x)
+        if (z >= x)
         {
+
             if (moviment.z < 0)
-                Z = z * 1.2f;cxvxcvxcv
+                Z = z * MoveCameraWhileMovingDown;
             else
-                Z = z * 0.6f;
+                Z = z * MoveCameraWhileMovingUp;
+
         }
         else
             Z = x;
+
         Y = Z * 0.4f;
 
         cameraPsition = new Vector3(0, Y * cameraExtendingMultiplier, Z * cameraExtendingMultiplier);
         cameraPsitionGameobject.transform.localPosition = cameraPsition;
-    }
-    public bool IsSprinting()
-    {
-        return isSprinting;
-    }
-    public bool IsGrounded()
-    {
-        return cc.isGrounded;
-    }
-    public Vector2 Velosity()
-    {
-        return new Vector2(gameObject.transform.position.x, gameObject.transform.position.z);
     }
 
     public void StartFunction()
@@ -194,13 +185,12 @@ public class ThirdPersonController : MonoBehaviour, IScriptHubFunctions
         ScriptHub hub = GameObject.Find("ScriptHub").GetComponent<ScriptHub>();
         hub.AddToScriptsList(this, ScriptHubUpdateFunction.FunctionUpdate);
         hub.AddToScriptsList(this, ScriptHubUpdateFunction.FunctionFixedUpdate);
-        hub.AddToScriptsList(this, ScriptHubUpdateFunction.FunctionOneSecondUpdate);
+        //hub.AddToScriptsList(this, ScriptHubUpdateFunction.FunctionOneSecondUpdate);
     }
 
     public void ScriptHubOneSecondUpdate()
     {
-        CameraExtendingMultiplierCalculating(10);
-        //throw new NotImplementedException();
+        throw new NotImplementedException();
     }
     public void CameraExtendingMultiplierCalculating(int numberOfSteps)
     {
@@ -219,7 +209,7 @@ public class ThirdPersonController : MonoBehaviour, IScriptHubFunctions
 
         for (int i = 0; i < tackts; i++)
         {
-            if(cameraExtendingMultiplier>=100 && cameraExtendingMultiplier<=200)
+            if(cameraExtendingMultiplier>= ValueOfMinimumCameraZoom && cameraExtendingMultiplier<=ValueOfMaximumCameraZoom)
                 cameraExtendingMultiplier = cameraExtendingMultiplier + number;
         }
 

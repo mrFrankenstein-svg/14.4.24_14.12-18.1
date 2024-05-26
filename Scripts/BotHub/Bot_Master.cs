@@ -122,8 +122,8 @@ namespace Bots
                 GameObject pointObj = new GameObject();
                 pointObj.transform.position = item;
                 pointObj.transform.parent = followPointsGameobjektsParent.transform;
-                pointObj.AddComponent<MeshFilter>().mesh = mesh;
-                pointObj.AddComponent<MeshRenderer>();
+                //pointObj.AddComponent<MeshFilter>().mesh = mesh;
+                //pointObj.AddComponent<MeshRenderer>();
                 followPointsGameobjekts.Add(pointObj);
             }
             followPointsGameobjekts.Add(followPointsGameobjektsParent);

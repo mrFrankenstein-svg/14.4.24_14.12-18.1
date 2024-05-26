@@ -48,7 +48,6 @@ public class BotSlaveBrain : BotSlaveAIBrain, IScriptHubFunctions
         {
             return false;
         }
-        //navMeshAgent.SetDestination(moveTo);
     }
 
     public void ScriptHubUpdate()

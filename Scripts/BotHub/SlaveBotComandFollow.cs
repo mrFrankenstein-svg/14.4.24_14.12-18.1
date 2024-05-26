@@ -13,15 +13,11 @@ public class SlaveBotComandFollow : BotComandFollow
     {
         BotSlaveBrain botSlaveBrainClas = (BotSlaveBrain)waitingForCommand;
         List<GameObject> list = (List<GameObject>)gameObjectOrVector3ToFollow[0];
+
         if (botSlaveBrainClas.NavMeshAgentMove(list[indexOfThisBot].GetComponent<Transform>().position)==false)
         {
             botSlaveBrainClas.NavMeshAgentMove(list.Last().GetComponent<Transform>().position);
         }
-
-        //if (botSlaveBrainClas.PathStatus()==false)
-        //{
-        //}
-
     }
     //private void SetTargetToNavmesh(int indexOfThisBot, List<GameObject> gameObjectOrVector3ToFollow)
     //{

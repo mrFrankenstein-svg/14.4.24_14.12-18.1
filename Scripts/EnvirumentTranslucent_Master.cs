@@ -44,8 +44,8 @@ public class EnvirumentTranslucent_Master : MonoBehaviour, IScriptHubFunctions
         if (playerTransform == null)
             Debug.LogError("playerTransform не назначена в скрипте.\nplayerTransform is not assigned in the script.");
 
-
         Vector3 direction = mainCameraTransform.position- playerTransform.position;
+        Debug.DrawRay(playerTransform.position, direction, Color.green, 1f);
         RaycastHit[] hits = Physics.RaycastAll(playerTransform.position, direction, Vector3.Distance(playerTransform.position, mainCameraTransform.position));
 
         List<EnvirumentTranslucent_Slave> thisRaycastHit = new List<EnvirumentTranslucent_Slave>();
@@ -75,6 +75,7 @@ public class EnvirumentTranslucent_Master : MonoBehaviour, IScriptHubFunctions
         }
         previousRaycastHit = thisRaycastHit;
 
+        //Debug.DrawRay(playerTransform.position, direction, Color.red, Vector3.Distance(playerTransform.position, mainCameraTransform.position));
     }
 
 

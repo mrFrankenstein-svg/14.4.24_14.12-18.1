@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 4250418674127659649}
   - component: {fileID: 6508406807062540211}
   - component: {fileID: 2617650633633558474}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Stone3
-  m_TagString: Untagged
+  m_TagString: Do not touch
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -73,13 +73,13 @@ GameObject:
   - component: {fileID: 8255208056449762244}
   - component: {fileID: 4577404602321660614}
   - component: {fileID: 2585335443651620088}
-  - component: {fileID: 7400860237816147430}
+  - component: {fileID: 8966056376428300833}
   m_Layer: 5
   m_Name: Normal
   m_TagString: Do not touch
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_NavMeshLayer: 1
+  m_StaticEditorFlags: 8
   m_IsActive: 1
 --- !u!4 &8255208056449762244
 Transform:
@@ -146,8 +146,8 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &7400860237816147430
-BoxCollider:
+--- !u!136 &8966056376428300833
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -156,9 +156,10 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 8.938146, y: 12.503548, z: 9.674714}
-  m_Center: {x: 1.032867, y: 0.87317437, z: 4.651219}
+  m_Radius: 4.6839876
+  m_Height: 13.386908
+  m_Direction: 1
+  m_Center: {x: 1.0470486, y: 0.43149424, z: 3.3796787}
 --- !u!1 &7438713491395435953
 GameObject:
   m_ObjectHideFlags: 0
@@ -170,13 +171,13 @@ GameObject:
   - component: {fileID: 7450141043180245465}
   - component: {fileID: 6819958912475293775}
   - component: {fileID: 1028506119858289429}
-  - component: {fileID: 1676752621359963159}
+  - component: {fileID: 9221462761300346798}
   m_Layer: 5
   m_Name: Translucent
   m_TagString: Do not touch
   m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_NavMeshLayer: 1
+  m_StaticEditorFlags: 8
   m_IsActive: 0
 --- !u!4 &7450141043180245465
 Transform:
@@ -243,8 +244,8 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &1676752621359963159
-BoxCollider:
+--- !u!136 &9221462761300346798
+CapsuleCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -253,6 +254,7 @@ BoxCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 8.938146, y: 12.503548, z: 9.674714}
-  m_Center: {x: 1.032867, y: 0.87317437, z: 4.651219}
+  m_Radius: 4.6839876
+  m_Height: 13.386908
+  m_Direction: 1
+  m_Center: {x: 1.0470486, y: 0.43149424, z: 3.3796787}

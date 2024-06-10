@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using UnityEditor;
 using UnityEngine;
+using static UnityEditor.PlayerSettings;
 
 namespace EnvironmentSpawnerNamespace
 {
@@ -14,11 +15,17 @@ namespace EnvironmentSpawnerNamespace
         [Tooltip("Устанавливает это имя для объекта. Если переименование не требуется- оставить это поле пустым.\r\n\nSets this name for the object. If renaming is not required, leave this field empty.")]
         [SerializeField] string nameOfInstancignObjects;
 
+        [Tooltip("Добавить ли к имени установленного объекта его ID?\r\n\nShould I add its ID to the name of the installed object?")]
+        [SerializeField] bool shouldAddIDToNameOfInstalledObject=false;
+
         [Tooltip("Сколько объектов нужно установить при нажатии кнопки  \"Generate\".\r\n\nHow many objects should be installed when the \"Generate\" button is clicked.")]
         [SerializeField] uint numberOfSpawnedObjects = 0;
 
         [Tooltip("Префабы объектов, которые будут устанавливаться скриптом. Для каждой установки будет браться случайный объект из списка.\r\n\nPrefabs of objects that will be installed by the script. A random object from the list will be taken for each installation.")]
         [SerializeField] GameObject[] prefabs;
+
+        [Tooltip("Объект находится в \"техническом\" примитива типа \"Box\", который нужен только для правильной установки этого объекта через этот скрипт и который должен быть удалён? Примитив должен иметь название \"TechnicalBox\". \r\n\n Is the object located in a \"technical\" primitive of the \"Box\" type, which is needed only for the correct installation of this object through this script and which should be deleted? The primitive must have the name \"TechnicalBox\".")]
+        [SerializeField] bool objectInBox = false;
 
         [Tooltip("Объект находится в \"техническом\" BoxCollider , который нужен только для правильной установки им через этот скрипт и который должен быть удалён? Для правильной работы скрипта на после удаления \"техническом\" BoxCollider всё равно должен остаться хоть один Collider .\r\n\nIs the object in the \"technical\" BoxCollider, which is only needed to install it correctly through this script and which should be deleted? For the script to work correctly, after deleting the \"technical\" BoxCollider, at least one Collider should still remain.")]
         [SerializeField] bool objectInBoxCollider = false;
@@ -66,32 +73,37 @@ namespace EnvironmentSpawnerNamespace
         //If objects are placed in the wrong place 254 times, the execution of the method ends
         public void GenerateEnvironment_Main()
         {
-            byte mistakes = 0;
-            uint maxSpawnObjects = numberOfSpawnedObjects - (uint)spawnedObjects.Count;
-
-            for (; maxSpawnObjects > 0;)
+            if (SettingsChek())
             {
-                if (mistakes >= 254)
-                    break;
-                GameObject instObj = GenerateEnvironment_Slave();
-                if (instObj == null)
-                {
-                    mistakes++;
-                }
-                else
-                {
-                    spawnedObjects.Add(instObj);
-                    mistakes = 0;
-                    maxSpawnObjects--;
+                byte mistakes = 0;
+                uint maxSpawnObjects = numberOfSpawnedObjects - (uint)spawnedObjects.Count;
 
-                    instObj.AddComponent<OnDestroyScript>();
-                    instObj.GetComponent<OnDestroyScript>().SetSpawner(this);
-
-                    if (nameOfInstancignObjects != "")
-                        instObj.name = nameOfInstancignObjects + " " + instObj.GetInstanceID();
+                for (; maxSpawnObjects > 0;)
+                {
+                    if (mistakes >= 254)
+                        break;
+                    GameObject instObj = GenerateEnvironment_Slave();
+                    if (instObj == null)
+                    {
+                        mistakes++;
+                    }
                     else
                     {
-                        instObj.name = instObj.name + " " + instObj.GetInstanceID();
+                        spawnedObjects.Add(instObj);
+                        mistakes = 0;
+                        maxSpawnObjects--;
+
+                        instObj.AddComponent<OnDestroyScript>();
+                        instObj.GetComponent<OnDestroyScript>().SetSpawner(this);
+
+                        if (nameOfInstancignObjects != "")
+                            instObj.name = nameOfInstancignObjects;
+                        //else
+                        //{
+                        //    instObj.name = instObj.name + " " + instObj.GetInstanceID();
+                        //}
+                        if (shouldAddIDToNameOfInstalledObject == true)
+                            instObj.name = instObj.name + " " + instObj.GetInstanceID();
                     }
                 }
             }
@@ -115,6 +127,7 @@ namespace EnvironmentSpawnerNamespace
 
             int indexOfSpawnedObject = Random.Range(0, prefabs.Length);
             GameObject instantiateObject = Instantiate(prefabs[indexOfSpawnedObject], hit.point, Quaternion.identity);
+            //GameObject instantiateObject = PrefabUtility.InstantiatePrefab(prefabs[indexOfSpawnedObject] as GameObject);
             instantiateObject.name = prefabs[indexOfSpawnedObject].name;
 
             ScaleObject(ref instantiateObject);
@@ -132,6 +145,9 @@ namespace EnvironmentSpawnerNamespace
 
             if (objectInBoxCollider)
                 DestroyTechnicalBoxCollider( ref instantiateObject);
+
+            if (objectInBox)
+                DestroyTechnicalBox(instantiateObject);
 
             return instantiateObject;
         }
@@ -212,10 +228,14 @@ namespace EnvironmentSpawnerNamespace
 
         //функция которая удалит висящий на объекте "технический" Box Collider.
         //a function that will remove the "technical" Box Collider hanging on the object.
-        private void DestroyTechnicalBoxCollider( ref GameObject meshReplacementObject)
-		{
-			DestroyImmediate(meshReplacementObject.GetComponent<BoxCollider>());
-		}
+        private void DestroyTechnicalBoxCollider(ref GameObject meshReplacementObject)
+        {
+            DestroyImmediate(meshReplacementObject.GetComponent<BoxCollider>());
+        }
+        private void DestroyTechnicalBox(GameObject objWithTechnicalBox)
+        {
+            DestroyImmediate(objWithTechnicalBox.transform.Find("TechnicalBox").gameObject);
+        }
 
         //функция удаляет все Child объекты у выбранного объекта
         //the function deletes all Child objects from the selected object
@@ -237,18 +257,44 @@ namespace EnvironmentSpawnerNamespace
         {
             //Bounds bound = instantiateObject.GetComponent<BoxCollider>().bounds;
             Bounds bound;
+            if (objectInBox==false)
+            {
+                if (instantiateObject.GetComponent<MeshRenderer>() != null)
+                    bound = instantiateObject.GetComponent<MeshRenderer>().bounds;
 
-            if (instantiateObject.GetComponent<BoxCollider>() != null)
-                bound = instantiateObject.GetComponent<BoxCollider>().bounds;
-            else if (instantiateObject.GetComponent<MeshCollider>() != null)
-                bound = instantiateObject.GetComponent<MeshCollider>().bounds;
-            else if (instantiateObject.GetComponent<MeshRenderer>() != null)
-                bound = instantiateObject.GetComponent<MeshRenderer>().bounds;
+                else if (instantiateObject.GetComponent<MeshCollider>() != null)
+                    bound = instantiateObject.GetComponent<MeshCollider>().bounds;
+
+                else if (instantiateObject.GetComponent<BoxCollider>() != null)
+                    bound = instantiateObject.GetComponent<BoxCollider>().bounds;
+
+                else
+                {
+                    Debug.LogError("Для правильной работы скрипта на родительском объекте которые нужно установить должен быть либо BoxCollider, либо MeshCollider, либо MeshRenderer.\n" +
+                        "For the script to work correctly, either BoxCollider, MeshCollider, or MeshRenderer must be installed on the parent object.");
+                    return true;
+                }
+            }
             else
             {
-                Debug.LogError("Для правильной работы скрипта на родительском объекте которые нужно установить должен быть либо BoxCollider, либо MeshCollider, либо MeshRenderer.\n"+
-                    "For the script to work correctly, either BoxCollider, MeshCollider, or MeshRenderer must be installed on the parent object.");
-                return true;
+                Transform technicalBox = instantiateObject.transform.Find("TechnicalBox");
+                //if (instantiateObject.transform.Find("TechnicalBox") == null)
+                if (technicalBox == null)
+                    {
+                    Debug.LogError("В устанавливаемом объекте не получилось найти объект с именем \"TechnicalBox\". Проверьте точно ли он существует. \r\n An object named \"TechnicalBox\" could not be found in the object being installed. Check if it exists for sure.");
+                    return true;
+                }
+                else
+                {
+                    MeshRenderer technicalBoxMeshRenderer = technicalBox.GetComponent<MeshRenderer>();
+                    if (technicalBoxMeshRenderer == null)
+                    {
+                        Debug.LogError("В объекте \"TechnicalBox\" не получилось найти MeshRenderer. Проверьте точно ли он существует. \r\n The MeshRenderer could not be found in the \"TechnicalBox\" object. Check if it exists for sure. ");
+                        return true;
+                    }
+                    else
+                        bound = technicalBoxMeshRenderer.bounds;
+                }
             }
 
             instantiateObject.SetActive(false);
@@ -360,8 +406,18 @@ namespace EnvironmentSpawnerNamespace
 			, Random.Range(-dimensions.y / 2 * transform.localScale.x, dimensions.y / 2 * transform.localScale.z));
 			return rayPos;
 		}
+        private bool SettingsChek()
+        {
+            if (objectInBox && objectInBoxCollider)
+            {
+                Debug.LogError("Твои настройки не правильные. Проверьте настройки. Your settings are not correct. Check the settings.\r\n objectInBox && objectInBoxCollider==true");
+                return false;
+            }
+            else
+                return true;
+        }
 
-		private void COLLIDERSDEBUG(Collider[] col, string objName)
+        private void COLLIDERSDEBUG(Collider[] col, string objName)
 		{
             foreach (var item in col)
             {

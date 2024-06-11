@@ -1,21 +1,48 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
-using static AudioClipHubFunction;
 
 namespace AudioClipHubNamespace
 {
+    public enum AudioClipHubFunction: byte
+    {
+        first,
+        second,
+        third,
+        fourth,
+        fifth,
+        sixth,
+        seventh,
+        eighth,
+        ninth,
+        tenth
+    }
     public class AudioClipHub : MonoBehaviour
     {
-        [SerializeField] AudioClip[] stepsAudioClips;
-        [SerializeField] AudioClip[] fireAudioClips;
+        [SerializeField] AudioClip[] firstBaseOfSounds;
+        [SerializeField] AudioClip[] secondBaseOfSounds;
+        [SerializeField] AudioClip[] thirdBaseOfSounds;
+        [SerializeField] AudioClip[] fourthBaseOfSounds;
+        [SerializeField] AudioClip[] fifthBaseOfSounds;
+        [SerializeField] AudioClip[] sixthBaseOfSounds;
+        [SerializeField] AudioClip[] seventhBaseOfSounds;
+        [SerializeField] AudioClip[] eighthBaseOfSounds;
+        [SerializeField] AudioClip[] ninthBaseOfSounds;
+        [SerializeField] AudioClip[] tenthBaseOfSounds;
+        Array[] audioClipBaseHolder;
         [SerializeField] float maxDistanceOfSound = 30;
         [SerializeField] AudioRolloffMode rolloffMode;
+
         private void Awake()
         {
             if (gameObject.name != "AudioClipHub")
                 gameObject.name = "AudioClipHub";
+
+            audioClipBaseHolder = new Array[] {firstBaseOfSounds,secondBaseOfSounds,thirdBaseOfSounds,fourthBaseOfSounds,fifthBaseOfSounds,
+            sixthBaseOfSounds,seventhBaseOfSounds,eighthBaseOfSounds,ninthBaseOfSounds,tenthBaseOfSounds};
         }
         public AudioSource GetOrCreateAudioSource(GameObject parentGameObject, string name)
         {
@@ -37,21 +64,25 @@ namespace AudioClipHubNamespace
 
         public AudioClip GetRandomClip(AudioClipHubFunction typeOfClip)
         {
-            AudioClip result = null;
+            AudioClip[] array= audioClipBaseHolder[(byte)typeOfClip] as AudioClip[];
 
-            switch (typeOfClip)
-            {
-                case StepAudio:
-                    result = stepsAudioClips[Random.Range(0, stepsAudioClips.Length)];
-                    break;
-                case FireAudio:
-                    result = fireAudioClips[Random.Range(0, fireAudioClips.Length)];
-                    break;
-                default:
-                    Debug.Log(this + " AudioClip selection error. Incorrect request");
-                    break;
-            }
-            return result;
+            if(array.Length>0)
+                return array[UnityEngine.Random.Range(0, array.Length-1)];
+            else
+                Debug.LogError(this + " AudioClip selection error. Tere is no AudioClip in selected BaseOfSounds \r\n\"GetRandomClip()\"");
+
+            return null;
+        }
+        public AudioClip GetCurrentClip(AudioClipHubFunction typeOfClip, int indexOfClip)
+        {
+            AudioClip[] array = audioClipBaseHolder[(byte)typeOfClip] as AudioClip[];
+
+            if (indexOfClip < array.Length && indexOfClip > -1)
+                return array[indexOfClip];
+            else
+                Debug.LogError(this + " AudioClip selection error. Tere is no AudioClip with this index \r\n\"GetRandomClip()\"");
+
+            return null;
         }
     }
 }

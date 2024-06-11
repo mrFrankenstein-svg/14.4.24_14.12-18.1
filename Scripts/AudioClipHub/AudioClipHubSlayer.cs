@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using static AudioClipHubFunction;
 
 namespace AudioClipHubNamespace
 {
@@ -19,7 +18,8 @@ namespace AudioClipHubNamespace
         }
         void Step()
         {
-            stepAudio.PlayOneShot(audioHub.GetRandomClip(StepAudio));
+            эта функчия будет надстройкой над мастером (главным ботом). К ней будут обращатся все слейвы, которые будут им собираться
+            stepAudio.PlayOneShot(audioHub.GetRandomClip(AudioClipHubFunction.first));
         }
     }
 }

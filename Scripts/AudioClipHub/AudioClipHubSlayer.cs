@@ -9,17 +9,17 @@ namespace AudioClipHubNamespace
     public class AudioClipHubSlayer : MonoBehaviour
     {
         [SerializeField] AudioClipHub audioHub;
-        [SerializeField] AudioSource stepAudio;
+        [SerializeField] AudioSource mainAudioSource;
 
         void Start()
         {
             audioHub = GameObject.Find("AudioClipHub").GetComponent<AudioClipHub>();
-            stepAudio = audioHub.GetOrCreateAudioSource(gameObject, "Step Audio");
+            mainAudioSource = audioHub.GetOrCreateAudioSource(gameObject, "Step Audio");
         }
         void Step()
         {
-            эта функчия будет надстройкой над мастером (главным ботом). К ней будут обращатся все слейвы, которые будут им собираться
-            stepAudio.PlayOneShot(audioHub.GetRandomClip(AudioClipHubFunction.first));
+            //эта функчия будет надстройкой над мастером (главным ботом). К ней будут обращатся все слейвы, которые будут им собираться
+            audioHub.PlayThisSound(mainAudioSource, AudioClipHubFunction.footsteps);
         }
     }
 }

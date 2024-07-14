@@ -41,7 +41,10 @@ public class BotSlaveBrain : BotSlaveAIBrain, IScriptHubFunctions
         navMeshAgent.CalculatePath(moveTo, path);
         if (PathStatus(path) == true)
         {
-            navMeshAgent.SetPath(path);
+            StartCoroutine(AddRandomDelay(() => 
+            {
+                navMeshAgent.SetPath(path);
+            }));
             return true;
         }
         else
@@ -85,5 +88,22 @@ public class BotSlaveBrain : BotSlaveAIBrain, IScriptHubFunctions
             return true;
         else
             return false;
+    }
+    //добавляет задержку в любой скрипт если сделать следующую конструкцию:
+    //  StartCoroutine(AddRandomDelay(() => {
+    //      Действие, которое будет выполнено после задержки
+    //      Debug.Log("Задержка завершена");
+    //  }));
+
+private IEnumerator AddRandomDelay(System.Action action)
+    {
+        // Генерация случайной задержки от 50 миллисекунд до 1 секунды
+        float delay = Random.Range(0.03f, 1.0f);
+
+        // Ожидание указанное количество секунд
+        yield return new WaitForSeconds(delay);
+
+        // Выполнение переданного действия после задержки
+        action();
     }
 }

@@ -14,12 +14,12 @@ namespace AudioClipHubNamespace
         void Start()
         {
             audioHub = GameObject.Find("AudioClipHub").GetComponent<AudioClipHub>();
-            mainAudioSource = audioHub.GetOrCreateAudioSource(gameObject, "Step Audio");
+            //mainAudioSource = audioHub.GetOrCreateAudioSource(audioHub.gameObject, "Step Audio");
         }
         void Step()
         {
             //эта функчия будет надстройкой над мастером (главным ботом). К ней будут обращатся все слейвы, которые будут им собираться
-            audioHub.PlayThisSound(mainAudioSource, AudioClipHubFunction.footsteps);
+            audioHub.PlayThisSound(gameObject, AudioClipHubFunction.footsteps);
         }
     }
 }

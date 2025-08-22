@@ -1,18 +1,13 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Bots;
 using UnityEngine.AI;
 using AudioClipHubNamespace;
 
-using static ScriptHubUpdateFunction;
-using TMPro;
-
-public class BotSlaveBrain : BotSlaveAIBrain, IScriptHubFunctions
+public class BotSlaveBrain : BotSlaveAIBrain, IScriptHubUpdateFunction
 {
     [SerializeField] Animator animator;
     [SerializeField] NavMeshAgent navMeshAgent;
-    [SerializeField] AudioClipHubSlayer audioClipHubSlayer;
     [SerializeField] Renderer renderer;
     [SerializeField] bool isHasPath = false;
     public override void PrepperForWork()
@@ -29,11 +24,9 @@ public class BotSlaveBrain : BotSlaveAIBrain, IScriptHubFunctions
         else
             navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
 
-        audioClipHubSlayer = gameObject.AddComponent<AudioClipHubSlayer>();
 
         StartFunction();
 
-        Debug.Log("BotSlaveBrain PrepperForWork закончился");
     }
     public bool NavMeshAgentMove(Vector3 moveTo)
     {
@@ -66,22 +59,12 @@ public class BotSlaveBrain : BotSlaveAIBrain, IScriptHubFunctions
 
     }
 
-    public void ScriptHubFixUpdate()
-    {
-        //это не нужно но обязано тут быть
-        throw new System.NotImplementedException();
-    }
 
     public void StartFunction()
     {
-        FindObjectOfType<ScriptHub>().AddToScriptsList(this, FunctionUpdate);
+        ScriptHub.AddToScriptsList(this);
     }
 
-    public void ScriptHubOneSecondUpdate()
-    {
-        //это не нужно но обязано тут быть
-        throw new System.NotImplementedException();
-    }
     public bool PathStatus(NavMeshPath pathThatNeedetStatus)
     {
         if (pathThatNeedetStatus.status == NavMeshPathStatus.PathComplete)

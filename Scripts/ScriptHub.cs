@@ -3,29 +3,41 @@ using System.Collections.Generic;
 using System;
 using UnityEngine;
 
-using static ScriptHubUpdateFunction;
-public interface IScriptHubFunctions
+//using static ScriptHubUpdateFunction;
+public interface IScriptHubTechnicalInterface
 {
-    void ScriptHubUpdate();
-    void ScriptHubFixUpdate();
-    void ScriptHubOneSecondUpdate();
+    void EndFunction();
     void StartFunction();
 }
-public enum ScriptHubUpdateFunction
+public interface IScriptHubUpdateFunction: IScriptHubTechnicalInterface
 {
-    FunctionUpdate,
-    FunctionFixedUpdate,
-    FunctionOneSecondUpdate
+    void ScriptHubUpdate();
 }
+public interface IScriptHubFixUpdateFunction : IScriptHubTechnicalInterface
+{
+    void ScriptHubFixUpdate();
+}
+public interface IScriptHubOneSecondUpdateFunction : IScriptHubTechnicalInterface
+{
+    void ScriptHubOneSecondUpdate();
+}
+//public enum ScriptHubUpdateFunction
+//{
+//    FunctionUpdate,
+//    FunctionFixedUpdate,
+//    FunctionOneSecondUpdate
+//}
 
 public class ScriptHub : MonoBehaviour
 {
+    private static ScriptHub scriptHub;
     [SerializeField] List<object> updateScripts = new List<object>();
     [SerializeField] List<object> fixUpdateScripts = new List<object>();
     [SerializeField] List<object> oneSecondUpdate=new List<object>();
 
     private void Awake()
     {
+        scriptHub=this;
         gameObject.name = "ScriptHub";
     }
     private void Start()
@@ -39,7 +51,7 @@ public class ScriptHub : MonoBehaviour
         {
             try
             {
-                IScriptHubFunctions script = (IScriptHubFunctions)obj;
+                IScriptHubUpdateFunction script = (IScriptHubUpdateFunction)obj;
                 script.ScriptHubUpdate();
             }
             catch (Exception e)
@@ -54,7 +66,7 @@ public class ScriptHub : MonoBehaviour
         {
             try
             {
-                IScriptHubFunctions script = (IScriptHubFunctions)obj;
+                IScriptHubFixUpdateFunction script = (IScriptHubFixUpdateFunction)obj;
                 script.ScriptHubFixUpdate();
             }
             catch (Exception e)
@@ -73,7 +85,7 @@ public class ScriptHub : MonoBehaviour
             {
                 try
                 {
-                    IScriptHubFunctions script = (IScriptHubFunctions)obj;
+                    IScriptHubOneSecondUpdateFunction script = (IScriptHubOneSecondUpdateFunction)obj;
                     script.ScriptHubOneSecondUpdate();
                 }
                 catch (Exception e)
@@ -83,38 +95,70 @@ public class ScriptHub : MonoBehaviour
             }
         }
     }
-    public void AddToScriptsList(object script, ScriptHubUpdateFunction updateFunction)
+    #region Первая_Версия_Метода
+    //работает хорошо
+    //public static void AddToScriptsList(object script, ScriptHubUpdateFunction updateFunction)
+    //{
+    //    switch (updateFunction)
+    //    {
+    //        case FunctionUpdate:
+    //            if (!scriptHub.updateScripts.Contains(script))
+    //                scriptHub.updateScripts.Add(script);
+    //            break;
+
+    //        case FunctionFixedUpdate:
+    //            if (!scriptHub.fixUpdateScripts.Contains(script))
+    //                scriptHub.fixUpdateScripts.Add(script);
+    //            break;
+
+    //        case FunctionOneSecondUpdate:
+    //            if (!scriptHub.oneSecondUpdate.Contains(script))
+    //                scriptHub.oneSecondUpdate.Add(script);
+    //            break;
+
+    //        default:
+    //            Debug.LogError("ScriptHub AddToScriptsList() error.");
+    //            break;
+    //    }
+
+    //}
+    #endregion
+    public static void AddToScriptsList(IScriptHubTechnicalInterface script)
     {
-        switch (updateFunction)
+        byte tick=0;
+        if (script is IScriptHubUpdateFunction)
         {
-            case FunctionUpdate:
-                if (!updateScripts.Contains(script))
-                    updateScripts.Add(script);
-                break;
-
-            case FunctionFixedUpdate:
-                if (!fixUpdateScripts.Contains(script))
-                    fixUpdateScripts.Add(script);
-                break;
-
-            case FunctionOneSecondUpdate:
-                if(!oneSecondUpdate.Contains(script))
-                    oneSecondUpdate.Add(script);
-                break;
-
-            default:
-                Debug.LogError("ScriptHub AddToScriptsList() error.");
-                break;
+            if (!scriptHub.updateScripts.Contains(script))
+                scriptHub.updateScripts.Add(script);
+            tick++;
         }
 
+        if (script is IScriptHubFixUpdateFunction)
+        {
+            if (!scriptHub.fixUpdateScripts.Contains(script))
+                scriptHub.fixUpdateScripts.Add(script);
+            tick++;
+        }
+
+        if (script is IScriptHubOneSecondUpdateFunction)
+        {
+            if (!scriptHub.oneSecondUpdate.Contains(script))
+                scriptHub.oneSecondUpdate.Add(script);
+            tick++;
+        }
+        
+        if(tick==0)
+            Debug.LogError("ScriptHub AddToScriptsList() error.");
+
+
     }
-    public void RemoveFromUScriptsList(object script)
+    public static void RemoveFromScriptsList(IScriptHubTechnicalInterface script)
     {
-        if (updateScripts.Contains(script))
-            updateScripts.Remove(script);
-        if (fixUpdateScripts.Contains(script))
-            fixUpdateScripts.Remove(script);
-        if (oneSecondUpdate.Contains(script))
-            oneSecondUpdate.Remove(script);
+        if (scriptHub.updateScripts.Contains(script))
+            scriptHub.updateScripts.Remove(script);
+        if (scriptHub.fixUpdateScripts.Contains(script))
+            scriptHub.fixUpdateScripts.Remove(script);
+        if (scriptHub.oneSecondUpdate.Contains(script))
+            scriptHub.oneSecondUpdate.Remove(script);
     }
 }

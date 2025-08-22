@@ -14,7 +14,7 @@ using static SetingsValuses;
 /// Make sure that the object that will receive this script (the player) 
 /// has the Player tag and the Character Controller component.
 /// </summary>
-public class ThirdPersonController : MonoBehaviour, IScriptHubFunctions
+public class ThirdPersonController : MonoBehaviour, IScriptHubFixUpdateFunction, IScriptHubUpdateFunction
 {
 
     [Tooltip("Speed ​​at which the character moves. It is not affected by gravity or jumping.")]
@@ -182,16 +182,10 @@ public class ThirdPersonController : MonoBehaviour, IScriptHubFunctions
 
     public void StartFunction()
     {
-        ScriptHub hub = GameObject.Find("ScriptHub").GetComponent<ScriptHub>();
-        hub.AddToScriptsList(this, ScriptHubUpdateFunction.FunctionUpdate);
-        hub.AddToScriptsList(this, ScriptHubUpdateFunction.FunctionFixedUpdate);
+        ScriptHub.AddToScriptsList(this);
         //hub.AddToScriptsList(this, ScriptHubUpdateFunction.FunctionOneSecondUpdate);
     }
 
-    public void ScriptHubOneSecondUpdate()
-    {
-        throw new NotImplementedException();
-    }
     public void CameraExtendingMultiplierCalculating(int numberOfSteps)
     {
         int tackts;

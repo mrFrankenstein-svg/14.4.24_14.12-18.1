@@ -1,12 +1,9 @@
-using Bots;
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
-using static ScriptHubUpdateFunction;
 
 namespace Bots
 {
-    public class Bot_Master : MonoBehaviour, IBotMaster, IScriptHubFunctions
+    public class Bot_Master : MonoBehaviour, IBotMaster, IScriptHubOneSecondUpdateFunction
     {
         //два поля вынесенные сюда для теста из фкнкции CalculateRadiusForFollowingPoints2TEST()
         [SerializeField] int maxSlavesInThisCircle = 6;
@@ -50,22 +47,11 @@ namespace Bots
             Debug.Log("Написать ещё чё-нить");
         }
 
-        public void ScriptHubUpdate()
-        {
-            //не нужно
-            throw new System.NotImplementedException();
-        }
-
-        public void ScriptHubFixUpdate()
-        {
-            //не нужно
-            throw new System.NotImplementedException();
-        }
         public void StartFunction()
         {
             botHub = GameObject.Find("BotHub").GetComponent<BotHub>();
 
-            FindObjectOfType<ScriptHub>().AddToScriptsList(this, FunctionOneSecondUpdate);
+            ScriptHub.AddToScriptsList(this);
         }
 
         public void ScriptHubOneSecondUpdate()

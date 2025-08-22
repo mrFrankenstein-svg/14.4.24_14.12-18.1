@@ -1,14 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Resources;
-using Unity.VisualScripting;
-using UnityEditor.PackageManager;
 using UnityEngine;
-using static ScriptHubUpdateFunction;
-using static Unity.VisualScripting.Member;
-using static UnityEditor.Progress;
 
 
 namespace AudioClipHubNamespace
@@ -32,6 +24,7 @@ namespace AudioClipHubNamespace
     }
     public class AudioClipHub : MonoBehaviour //IScriptHubFunctions
     {
+        #region Fields_
         [SerializeField] AudioClip[] footstepsSoundsBase;
         [SerializeField] AudioClip[] actionSoundsBase;
         [SerializeField] AudioClip[] deathSoundsBase;
@@ -52,7 +45,7 @@ namespace AudioClipHubNamespace
         [SerializeField] AudioRolloffMode rolloffMode;
         [SerializeField] List<AudioClipHub_AudioSourceHubObj> audioSourceHub;
         [SerializeField] AudioListener mainAudioListener;
-
+        #endregion
         private void Awake()
         {
             if (gameObject.name != "AudioClipHub")
@@ -178,49 +171,7 @@ namespace AudioClipHubNamespace
 
             return foundSilentObject;
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+        
 
         public void CheckingForSilentAndIdenticalObjects(AudioClip track, ref AudioClipHub_AudioSourceHubObj foundSilentObject2, ref int identicalObjects)
         {
@@ -271,18 +222,6 @@ namespace AudioClipHubNamespace
             audioSourceHub.Add(audioSourceHubObjScript);
             return audioSourceHubObjScript;
         }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

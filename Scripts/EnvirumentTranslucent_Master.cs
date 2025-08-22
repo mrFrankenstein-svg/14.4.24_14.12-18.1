@@ -3,9 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using UnityEngine;
-using static ScriptHubUpdateFunction;
 
-public class EnvirumentTranslucent_Master : MonoBehaviour, IScriptHubFunctions
+public class EnvirumentTranslucent_Master : MonoBehaviour, IScriptHubOneSecondUpdateFunction
 {
     [SerializeField] Transform mainCameraTransform;
     [SerializeField] Transform playerTransform;
@@ -15,10 +14,6 @@ public class EnvirumentTranslucent_Master : MonoBehaviour, IScriptHubFunctions
         StartFunction();
     }
 
-    public void ScriptHubFixUpdate()
-    {
-        throw new System.NotImplementedException();
-    }
 
     public void ScriptHubOneSecondUpdate()
     {
@@ -26,14 +21,10 @@ public class EnvirumentTranslucent_Master : MonoBehaviour, IScriptHubFunctions
         FunctionsOfOrientationTriggerColliderOnPlayer();
     }
 
-    public void ScriptHubUpdate()
-    {
-        throw new System.NotImplementedException();
-    }
 
     public void StartFunction()
     {
-        FindObjectOfType<ScriptHub>().AddToScriptsList(this, FunctionOneSecondUpdate);
+        ScriptHub.AddToScriptsList(this);
         mainCameraTransform = Camera.main.gameObject.transform;
         playerTransform=GameObject.FindGameObjectWithTag("Player").transform;
     }

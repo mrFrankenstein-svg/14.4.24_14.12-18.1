@@ -1,16 +1,11 @@
-using static ScriptHubUpdateFunction;
 using UnityEngine;
-using AudioClipHubNamespace;
-using System;
-using static Unity.VisualScripting.Member;
-using System.Collections.Generic;
 using System.Collections;
 
 public class AudioClipHub_AudioSourceHubObj : MonoBehaviour
 {
-    AudioSource audioSource;
+    private AudioSource audioSource;
     [SerializeField]AudioClip audioClip;
-    bool destroy = false;
+    private bool destroy = false;
 
     public bool IsPlaying()
     {
@@ -63,7 +58,7 @@ public class AudioClipHub_AudioSourceHubObj : MonoBehaviour
         {
             if (audioSource.isPlaying == false)
             {
-                Destroy(this.gameObject);
+                Destroy(gameObject);
                 break;
             }
             else

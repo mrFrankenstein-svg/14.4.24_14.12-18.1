@@ -6,8 +6,8 @@ using UnityEngine;
 //using static ScriptHubUpdateFunction;
 public interface IScriptHubTechnicalInterface
 {
-    void EndFunction();
-    void StartFunction();
+    void OnEnable();
+    void OnDisable();
 }
 public interface IScriptHubUpdateFunction: IScriptHubTechnicalInterface
 {
@@ -30,22 +30,31 @@ public interface IScriptHubOneSecondUpdateFunction : IScriptHubTechnicalInterfac
 
 public class ScriptHub : MonoBehaviour
 {
-    private static ScriptHub scriptHub;
+
+    //private static ScriptHub scriptHub;
     [SerializeField] List<object> updateScripts = new List<object>();
     [SerializeField] List<object> fixUpdateScripts = new List<object>();
     [SerializeField] List<object> oneSecondUpdate=new List<object>();
+    public static Action<IScriptHubTechnicalInterface> OnAddToScriptsList;
+    public static Action<IScriptHubTechnicalInterface> OnRemoveFromScriptsList;
 
-    private void Awake()
+    private void OnEnable()
     {
-        scriptHub=this;
-        gameObject.name = "ScriptHub";
+        OnAddToScriptsList += AddToScriptsList;
+        OnRemoveFromScriptsList += RemoveFromScriptsList;
+    }
+    private void OnDisable()
+    {
+        OnAddToScriptsList -= AddToScriptsList;
+        OnRemoveFromScriptsList -= RemoveFromScriptsList;
     }
     private void Start()
     {
+        gameObject.name = "ScriptHub";
         StartCoroutine(OncePerSecond());
     }
 
-    void Update()
+    private void Update()
     {
         foreach (object obj in updateScripts)
         {
@@ -56,7 +65,7 @@ public class ScriptHub : MonoBehaviour
             }
             catch (Exception e)
             {
-                Debug.Log(this.name + " ERORR WILE TRYING DO ScriptHubUpdate() ON" + obj + "\n\n" + e);
+                Debug.LogError(this.name + " ERORR WILE TRYING DO ScriptHubUpdate() ON" + obj + "\n\n" + e);
             }
         }
     }
@@ -75,7 +84,7 @@ public class ScriptHub : MonoBehaviour
             }
         }
     }
-    IEnumerator OncePerSecond()
+    private IEnumerator OncePerSecond()
     {
         while (true)
         {
@@ -123,42 +132,42 @@ public class ScriptHub : MonoBehaviour
 
     //}
     #endregion
-    public static void AddToScriptsList(IScriptHubTechnicalInterface script)
+    private void AddToScriptsList(IScriptHubTechnicalInterface script)
     {
+        
         byte tick=0;
         if (script is IScriptHubUpdateFunction)
         {
-            if (!scriptHub.updateScripts.Contains(script))
-                scriptHub.updateScripts.Add(script);
+            if (!updateScripts.Contains(script))
+                updateScripts.Add(script);
             tick++;
         }
 
         if (script is IScriptHubFixUpdateFunction)
         {
-            if (!scriptHub.fixUpdateScripts.Contains(script))
-                scriptHub.fixUpdateScripts.Add(script);
+            if (!fixUpdateScripts.Contains(script))
+                fixUpdateScripts.Add(script);
             tick++;
         }
 
         if (script is IScriptHubOneSecondUpdateFunction)
         {
-            if (!scriptHub.oneSecondUpdate.Contains(script))
-                scriptHub.oneSecondUpdate.Add(script);
+            if (!oneSecondUpdate.Contains(script))
+                oneSecondUpdate.Add(script);
             tick++;
         }
         
         if(tick==0)
             Debug.LogError("ScriptHub AddToScriptsList() error.");
 
-
     }
-    public static void RemoveFromScriptsList(IScriptHubTechnicalInterface script)
+    private void RemoveFromScriptsList(IScriptHubTechnicalInterface script)
     {
-        if (scriptHub.updateScripts.Contains(script))
-            scriptHub.updateScripts.Remove(script);
-        if (scriptHub.fixUpdateScripts.Contains(script))
-            scriptHub.fixUpdateScripts.Remove(script);
-        if (scriptHub.oneSecondUpdate.Contains(script))
-            scriptHub.oneSecondUpdate.Remove(script);
+        if (updateScripts.Contains(script))
+            updateScripts.Remove(script);
+        if (fixUpdateScripts.Contains(script))
+            fixUpdateScripts.Remove(script);
+        if (oneSecondUpdate.Contains(script))
+            oneSecondUpdate.Remove(script);
     }
 }

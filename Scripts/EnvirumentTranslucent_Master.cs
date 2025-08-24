@@ -1,7 +1,4 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Net;
 using UnityEngine;
 
 public class EnvirumentTranslucent_Master : MonoBehaviour, IScriptHubOneSecondUpdateFunction
@@ -9,25 +6,27 @@ public class EnvirumentTranslucent_Master : MonoBehaviour, IScriptHubOneSecondUp
     [SerializeField] Transform mainCameraTransform;
     [SerializeField] Transform playerTransform;
     [SerializeField] List<EnvirumentTranslucent_Slave> previousRaycastHit;//= new List<EnvirumentTranslucent_Slave>();
-    private void Start()
+    public void OnEnable()
     {
-        StartFunction();
+        ScriptHub.OnAddToScriptsList?.Invoke(this);
     }
 
-
-    public void ScriptHubOneSecondUpdate()
+    public void OnDisable()
     {
-        //throw new System.NotImplementedException();
-        FunctionsOfOrientationTriggerColliderOnPlayer();
+        ScriptHub.OnRemoveFromScriptsList?.Invoke(this);
     }
 
-
-    public void StartFunction()
+    public void Start()
     {
-        ScriptHub.AddToScriptsList(this);
         mainCameraTransform = Camera.main.gameObject.transform;
         playerTransform=GameObject.FindGameObjectWithTag("Player").transform;
     }
+
+    public void ScriptHubOneSecondUpdate()
+    {
+        FunctionsOfOrientationTriggerColliderOnPlayer();
+    }
+
     public void FunctionsOfOrientationTriggerColliderOnPlayer()
     {
         if (mainCameraTransform == null)
@@ -68,6 +67,7 @@ public class EnvirumentTranslucent_Master : MonoBehaviour, IScriptHubOneSecondUp
 
         //Debug.DrawRay(playerTransform.position, direction, Color.red, Vector3.Distance(playerTransform.position, mainCameraTransform.position));
     }
+
 
 
     //private void OnTriggerEnter(Collider other)

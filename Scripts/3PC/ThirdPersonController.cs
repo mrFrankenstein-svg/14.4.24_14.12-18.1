@@ -1,5 +1,4 @@
 ﻿using System;
-using Unity.VisualScripting;
 using UnityEngine;
 using static SetingsValuses;
 
@@ -49,12 +48,20 @@ public class ThirdPersonController : MonoBehaviour, IScriptHubFixUpdateFunction,
     Animator animator;
     CharacterController cc;
 
+    public void OnEnable()
+    {
+        ScriptHub.OnAddToScriptsList?.Invoke(this);
+    }
+
+    public void OnDisable()
+    {
+        ScriptHub.OnRemoveFromScriptsList?.Invoke(this);
+    }
 
     void Start()
     {
         cc = GetComponent<CharacterController>();
         animator = GetComponent<Animator>();
-        StartFunction();
 
         // Message informing the user that they forgot to add an animator
         if (animator == null)
@@ -180,12 +187,6 @@ public class ThirdPersonController : MonoBehaviour, IScriptHubFixUpdateFunction,
         cameraPsitionGameobject.transform.localPosition = cameraPsition;
     }
 
-    public void StartFunction()
-    {
-        ScriptHub.AddToScriptsList(this);
-        //hub.AddToScriptsList(this, ScriptHubUpdateFunction.FunctionOneSecondUpdate);
-    }
-
     public void CameraExtendingMultiplierCalculating(int numberOfSteps)
     {
         int tackts;
@@ -208,4 +209,5 @@ public class ThirdPersonController : MonoBehaviour, IScriptHubFixUpdateFunction,
         }
 
     }
+
 }

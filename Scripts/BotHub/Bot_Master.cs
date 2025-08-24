@@ -5,6 +5,7 @@ namespace Bots
 {
     public class Bot_Master : MonoBehaviour, IBotMaster, IScriptHubOneSecondUpdateFunction
     {
+        #region Fields_
         //два поля вынесенные сюда для теста из фкнкции CalculateRadiusForFollowingPoints2TEST()
         [SerializeField] int maxSlavesInThisCircle = 6;
         [SerializeField] float distanceFromMaster = 3f;
@@ -20,9 +21,19 @@ namespace Bots
 
         //херня для визуализации. В игре не нужно.
         [SerializeField] Mesh mesh;
+        #endregion
+        public void OnEnable()
+        {
+            ScriptHub.OnAddToScriptsList?.Invoke(this);
+        }
+
+        public void OnDisable()
+        {
+            ScriptHub.OnRemoveFromScriptsList?.Invoke(this);
+        }
         void Start()
         {
-            StartFunction();
+            botHub = GameObject.Find("BotHub").GetComponent<BotHub>();
 
             BotPrepperForWork();
         }
@@ -47,12 +58,6 @@ namespace Bots
             Debug.Log("Написать ещё чё-нить");
         }
 
-        public void StartFunction()
-        {
-            botHub = GameObject.Find("BotHub").GetComponent<BotHub>();
-
-            ScriptHub.AddToScriptsList(this);
-        }
 
         public void ScriptHubOneSecondUpdate()
         {
@@ -133,5 +138,6 @@ namespace Bots
                 slaveList.Add(slave);
             }
         }
+
     }
 }

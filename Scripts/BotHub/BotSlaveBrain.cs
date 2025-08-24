@@ -2,14 +2,24 @@ using System.Collections;
 using UnityEngine;
 using Bots;
 using UnityEngine.AI;
-using AudioClipHubNamespace;
 
 public class BotSlaveBrain : BotSlaveAIBrain, IScriptHubUpdateFunction
 {
     [SerializeField] Animator animator;
     [SerializeField] NavMeshAgent navMeshAgent;
-    [SerializeField] Renderer renderer;
+    [SerializeField] private Renderer renderer;
     [SerializeField] bool isHasPath = false;
+
+
+    public void OnEnable()
+    {
+        ScriptHub.OnAddToScriptsList?.Invoke(this);
+    }
+
+    public void OnDisable()
+    {
+        ScriptHub.OnRemoveFromScriptsList?.Invoke(this);
+    }
     public override void PrepperForWork()
     {
         animator = GetComponent<Animator>();
@@ -23,10 +33,6 @@ public class BotSlaveBrain : BotSlaveAIBrain, IScriptHubUpdateFunction
             navMeshAgent = gameObject.AddComponent<NavMeshAgent>();
         else
             navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
-
-
-        StartFunction();
-
     }
     public bool NavMeshAgentMove(Vector3 moveTo)
     {
@@ -48,6 +54,7 @@ public class BotSlaveBrain : BotSlaveAIBrain, IScriptHubUpdateFunction
 
     public void ScriptHubUpdate()
     {
+        if (gameObject.name == "BotHub") return;
         if (renderer.isVisible) 
         {
             if (isHasPath != navMeshAgent.hasPath)
@@ -57,12 +64,6 @@ public class BotSlaveBrain : BotSlaveAIBrain, IScriptHubUpdateFunction
             }
         }
 
-    }
-
-
-    public void StartFunction()
-    {
-        ScriptHub.AddToScriptsList(this);
     }
 
     public bool PathStatus(NavMeshPath pathThatNeedetStatus)
@@ -89,4 +90,5 @@ private IEnumerator AddRandomDelay(System.Action action)
         // Выполнение переданного действия после задержки
         action();
     }
+
 }

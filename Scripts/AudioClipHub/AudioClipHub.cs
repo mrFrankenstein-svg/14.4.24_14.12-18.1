@@ -40,7 +40,7 @@ namespace AudioClipHubNamespace
         [SerializeField] AudioClip[] tenthBaseOfSounds;
         Array[] audioClipBaseHolder;
 
-        [SerializeField] byte theTumberOfIdenticalSoundsAtTheSameTime = 3;
+        [SerializeField] byte theNumberOfIdenticalSoundsAtTheSameTime = 3;
         [SerializeField] float maxDistanceOfSound = 30;
         [SerializeField] AudioRolloffMode rolloffMode;
         [SerializeField] List<AudioClipHub_AudioSourceHubObj> audioSourceHub;
@@ -272,8 +272,8 @@ namespace AudioClipHubNamespace
                 {
                     soundObj = CreateSoundObj();
                 }
-                if (numberOfTheSameTrackPlayedNow <= theTumberOfIdenticalSoundsAtTheSameTime &&
-                    theTumberOfIdenticalSoundsAtTheSameTime!=0 &&
+                if (numberOfTheSameTrackPlayedNow <= theNumberOfIdenticalSoundsAtTheSameTime &&
+                    theNumberOfIdenticalSoundsAtTheSameTime!=0 &&
                     soundObj != null)
                 {
                     soundObj.gameObject.transform.position = obj.transform.position;

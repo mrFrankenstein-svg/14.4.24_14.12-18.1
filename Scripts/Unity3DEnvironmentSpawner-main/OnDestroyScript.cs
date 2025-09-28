@@ -9,7 +9,8 @@ namespace EnvironmentSpawnerNamespace
         [SerializeField] EnvironmentSpawner spawner;
         void OnDestroy()
         {
-            spawner.ThisObjectHasBeenDestroyed(gameObject);
+            Debug.Log("Написать и сюда что-нибудь");
+            //spawner.ThisObjectHasBeenDestroyed(gameObject);
         }
         public void SetSpawner(EnvironmentSpawner spawn)
         { 

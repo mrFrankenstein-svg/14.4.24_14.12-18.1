@@ -18,11 +18,11 @@ namespace EnvironmentSpawnerNamespace
 
             if (GUILayout.Button("Generate"))
 			{
-				script.GenerateEnvironment_Main();
+				script.Spawn(script.numberOfObjThatNeedToSpawn);
             }
 			if (GUILayout.Button("Destroy all in parent object"))
 			{
-				script.DestrouAllInParentObject();
+				script.Clear();
 			}
             //Debug.Log(EditorUtility.IsDirty(this)+ "  "+ EditorUtility.IsDirty(this));
             EditorUtility.SetDirty(this);

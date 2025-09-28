@@ -61,6 +61,7 @@ public class AnimationEventsHolder : MonoBehaviour, IScriptHubUpdateFunction
         // Заполняем карту хэш  enum
         stateMap = new Dictionary<int, AnimState>
         {
+            //AnimationsNameHolder- отдельный скрипт с именами анимаций
             { Animator.StringToHash(AnimationsNameHolder.deathAnimationName), AnimState.Death },
             { Animator.StringToHash(AnimationsNameHolder.combatIdleAnimationName), AnimState.CombatIdle },
             { Animator.StringToHash(AnimationsNameHolder.guardIdleAnimationName), AnimState.GuardIdle },

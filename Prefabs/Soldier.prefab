@@ -110,6 +110,7 @@ GameObject:
   - component: {fileID: 4150213161321076534}
   - component: {fileID: 3355547270258313080}
   - component: {fileID: 4888270928757705731}
+  - component: {fileID: 279099150926131665}
   m_Layer: 0
   m_Name: Soldier
   m_TagString: Finish
@@ -194,6 +195,24 @@ MonoBehaviour:
   followComandScript: {fileID: 0}
   interactComandScript: {fileID: 0}
   actionComandScript: {fileID: 0}
+--- !u!114 &279099150926131665
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4150213161311608656}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c5f91017ce5b4e40a62cbcfe6e4ea46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 0}
+  time:
+  - state: 4
+    timeOfEvent:
+    - 0.25
+    - 0.66
 --- !u!1 &4150213161311613004
 GameObject:
   m_ObjectHideFlags: 0

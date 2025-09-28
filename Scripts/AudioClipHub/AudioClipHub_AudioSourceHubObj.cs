@@ -15,7 +15,6 @@ public class AudioClipHub_AudioSourceHubObj : MonoBehaviour
     {
         if (destroy != true)
         {
-            //audioSource.PlayOneShot(clip);
             audioClip = clip;
             audioSource.clip = clip;
             audioSource.Play();
@@ -26,11 +25,7 @@ public class AudioClipHub_AudioSourceHubObj : MonoBehaviour
     //public bool TheSameTrackAsThisOne(AudioClipHubFunction clipBase, int ind)
     public bool TheSameTrackAsThisOne(AudioClip track)
     {
-        //if (audioSource.clip != null)
-        //    destroy = destroy;
-        //if (numberOfClipBase == clipBase && index == ind)
         if (audioClip == track)
-        //if (id == track.GetInstanceID())
             return true;
         else
             return false;
@@ -82,19 +77,5 @@ public class AudioClipHub_AudioSourceHubObj : MonoBehaviour
         }
     }
 
-
-    //private IEnumerator AddRandomDelay(System.Action action)
-    //{
-    //    while (true)
-    //    {
-    //        yield return new WaitForSeconds(0.1f); // Check every 0.1 seconds
-
-    //        if (!audioSource.isPlaying)
-    //        {
-    //            action();
-    //            break;
-    //        }
-    //    }
-    //}
 }
 

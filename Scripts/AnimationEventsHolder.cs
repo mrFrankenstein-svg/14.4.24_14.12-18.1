@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using static AudioManager;
 public enum AnimState
 {
     None,
@@ -9,12 +11,26 @@ public enum AnimState
     Run,
     Shoot
 }
+[Serializable]
+public class TimeOfAnimEvents
+{
+    public AnimState state; 
+    [Header("Время срабатывания анимации. Min-0, Max-1.")]
+    public float[] timeOfEvent = {-1};
+}
 
 [RequireComponent(typeof(Animator))]
 public class AnimationEventsHolder : MonoBehaviour, IScriptHubUpdateFunction
 {
     [SerializeField] Animator animator;
-    AnimatorStateInfo state;
+    AnimatorStateInfo stateOfAnim;
+
+    private AnimState lastState;
+    private float lastTime;
+
+    [Header("Время срабатывания анимации")]
+    [SerializeField] private List<TimeOfAnimEvents> time = new List<TimeOfAnimEvents>(); // Список моментов срабатываний анимации
+    private Dictionary<AnimState, TimeOfAnimEvents> timeDict;    // Очередь для анимации
 
 
     //словарь для сопоставления хэшей с enum
@@ -32,11 +48,15 @@ public class AnimationEventsHolder : MonoBehaviour, IScriptHubUpdateFunction
     private void Start()
     {
         if (animator == null)
-            animator = GetComponent<Animator>(); 
+            animator = GetComponent<Animator>();
 
-        state = animator.GetCurrentAnimatorStateInfo(0);
-   
-        animator = GetComponent<Animator>();
+        // Заполняем словарь для быстрого доступа к звукам по типу
+        timeDict = new Dictionary<AnimState, TimeOfAnimEvents>();
+        foreach (var entry in time)
+        {
+            if (!timeDict.ContainsKey(entry.state))
+                timeDict.Add(entry.state, entry);
+        }
 
         // Заполняем карту хэш  enum
         stateMap = new Dictionary<int, AnimState>
@@ -54,8 +74,8 @@ public class AnimationEventsHolder : MonoBehaviour, IScriptHubUpdateFunction
     /// </summary>
     public AnimState GetCurrentState(int layer = 0)
     {
-        AnimatorStateInfo stateInfo = animator.GetCurrentAnimatorStateInfo(layer);
-        int currentHash = stateInfo.shortNameHash;
+        stateOfAnim = animator.GetCurrentAnimatorStateInfo(layer);
+        int currentHash = stateOfAnim.shortNameHash;
 
         if (stateMap.TryGetValue(currentHash, out AnimState state))
         {
@@ -68,8 +88,43 @@ public class AnimationEventsHolder : MonoBehaviour, IScriptHubUpdateFunction
     public void ScriptHubUpdate()
     {
         AnimState currentState = GetCurrentState();
+        float timeOfCurrentAnimation = ((stateOfAnim.normalizedTime % 1f) * stateOfAnim.length);
+        timeOfCurrentAnimation = (float)Math.Round(timeOfCurrentAnimation, 2);
 
-        switch (currentState)
+        if (timeOfCurrentAnimation == 0)
+        {
+            lastState = AnimState.None;
+            lastTime = -1;
+        }
+
+        if (!timeDict.TryGetValue(currentState, out var entry) || entry.timeOfEvent[0]==-1)
+        {
+            Debug.LogWarning($"[AnimationEventsHolder] Некоректное время срабатывания анимации. {entry}");
+            return;
+        }
+        for (int i = 0; i < entry.timeOfEvent.Length; i++)
+        {
+            if (timeOfCurrentAnimation == entry.timeOfEvent[i])
+            {
+                if (currentState != lastState)
+                {
+                    lastState=currentState;
+                    lastTime = -1;
+                }
+                if(entry.timeOfEvent[i]!= lastTime)
+                {
+                    lastTime=entry.timeOfEvent[i];
+                    PlayEvent(currentState);
+                }
+                
+            }
+        }
+
+        
+    }
+    private void PlayEvent(AnimState state)
+    {
+        switch (state)
         {
             case AnimState.None:
                 break;
@@ -78,9 +133,9 @@ public class AnimationEventsHolder : MonoBehaviour, IScriptHubUpdateFunction
             case AnimState.CombatIdle:
                 break;
             case AnimState.GuardIdle:
-                Debug.Log("hf,jnftn");
                 break;
             case AnimState.Run:
+                Instance.Play(SoundType.Footstep,transform.position);
                 break;
             case AnimState.Shoot:
                 break;

@@ -19,36 +19,37 @@ namespace EnvironmentSpawnerNamespace
             Instance = this;
         }
 
-        [Header("Зона спавна")]
+        [Header("Зона спавна Spawn zone")]
         [SerializeField] private Vector2 dimensions = new Vector2(5, 5);
         [SerializeField] private LayerMask ignoreLayers;
 
-        [Header("Префабы")]
+        [Header("Префабы Prefabs")]
         [SerializeField] private List<GameObject> prefabs = new List<GameObject>();
 
-        [Header("Родительский объектов")]
+        [Header("Родительский объектов Parent of the objects")]
         [SerializeField] private Transform parent;
 
-        [Header("Ограничениямест для спавна")]
+        [Header("Ограничения мест для спавна Restrictions on spawn locations")]
         [SerializeField] private LayerMask blockedLayers;
         [SerializeField] private List<string> blockedTags;
 
-        [Header("Разрешения мест для спавна")]
+        [Header("Разрешения мест для спавна Spawn site permissions")]
         [SerializeField] private LayerMask allowedLayers;
         [SerializeField] private List<string> allowedTags;
 
 
-        [Header("Настройки объекта")]
+        [Header("Настройки объекта Object Settings")]
         [SerializeField] private Vector2 scaleRange = new Vector2(1f, 1f);
+        [SerializeField] private float xAngle = 0;
         [SerializeField] private Vector2 rotationRange = new Vector2(0f, 360f);
         [SerializeField] private bool addIdToName = false;
 
-        [Header("Служебное")]
+        [Header("Служебное Official")]
         private byte mistakes=0;
         [SerializeField] public int numberOfObjThatNeedToSpawn=0;
         [SerializeField] private List<GameObject> spawnedObjects = new List<GameObject>();
 
-        // --- Основные публичные методы ---
+        // --- Основные публичные методы --- Basic public methods
         public void Spawn(int count)
         {
             for (int i = 0; i < count; i++)
@@ -69,7 +70,7 @@ namespace EnvironmentSpawnerNamespace
             spawnedObjects.Clear();
         }
 
-        // --- Вспомогательные методы ---
+        // --- Вспомогательные методы --- Auxiliary methods
         private GameObject SpawnOne()
         {
             mistakes = 0;
@@ -77,7 +78,7 @@ namespace EnvironmentSpawnerNamespace
 
             var prefab = prefabs[Random.Range(0, prefabs.Count)];
 
-            // Масштаб
+            // Масштаб --- Scale
             float scale = Random.Range(scaleRange.x, scaleRange.y);
 
             Vector3 hit=Vector3.zero;
@@ -100,18 +101,17 @@ namespace EnvironmentSpawnerNamespace
             if (hit != Vector3.zero)
             {
 
-                // Создаём объект
+                // Создаём объект --- Creating an object
                 var obj = Instantiate(prefab, hit, Quaternion.identity, parent != null ? parent : transform);
 
-                // Имя
                 obj.name = prefab.name;
                 if (addIdToName) obj.name += $"_{obj.GetInstanceID()}";
 
-                // Поворот
+                // Поворот --- rotation
                 float yRot = Random.Range(rotationRange.x, rotationRange.y);
-                obj.transform.Rotate(obj.transform.rotation.x, yRot, obj.transform.rotation.z);
+                obj.transform.Rotate(xAngle, yRot, obj.transform.rotation.z);
 
-                obj.transform.localScale = Vector3.one * scale;
+                obj.transform.localScale = obj.transform.localScale * scale;
 
                 return obj;
             }
@@ -127,14 +127,14 @@ namespace EnvironmentSpawnerNamespace
             if (!Physics.Raycast(GetRandomPointAbove(), Vector3.down, out RaycastHit hit, Mathf.Infinity, ~ignoreLayers))
                 return null;
 
-            // Проверка слоёв и тегов
+            // Проверка слоёв и тегов --- Checking layers and tags
             if (((1 << hit.collider.gameObject.layer) & blockedLayers) != 0) return null;
             if (blockedTags.Contains(hit.collider.tag)) return null;
 
-            // Проверка коллизий перед созданием
+            // Проверка коллизий перед созданием --- Checking for collisions before creation
             Vector3 checkSize = GetPrefabBounds(prefab) * scale * 0.5f;
             Collider[] overlaps = Physics.OverlapBox(hit.point, checkSize, Quaternion.identity);
-            //if (overlaps.Length > 0) return null; // место занято
+
             for (int i = 0; i < overlaps.Length; i++)
             {
                 if (blockedTags.Contains(overlaps[i].tag)) return null; 

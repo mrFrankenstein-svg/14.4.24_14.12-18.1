@@ -1,6 +1,6 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace EnvironmentSpawnerNamespace
 {
@@ -69,10 +69,10 @@ namespace EnvironmentSpawnerNamespace
             }
             spawnedObjects.Clear();
         }
-
         // --- Вспомогательные методы --- Auxiliary methods
         private GameObject SpawnOne()
         {
+            //переписать этот метод с учётом того что сказал чат гбт
             mistakes = 0;
             if (prefabs.Count == 0) return null;
 
@@ -80,6 +80,9 @@ namespace EnvironmentSpawnerNamespace
 
             // Масштаб --- Scale
             float scale = Random.Range(scaleRange.x, scaleRange.y);
+
+            // Поворот --- rotation
+            float yRot = Random.Range(rotationRange.x, rotationRange.y);
 
             Vector3 hit=Vector3.zero;
             for ( ;mistakes<255 ; )
@@ -89,7 +92,6 @@ namespace EnvironmentSpawnerNamespace
                 if (i is Vector3)
                 {
                     hit = (Vector3)i;
-                    mistakes = 0;
                     break;
                 }
                 else
@@ -100,16 +102,13 @@ namespace EnvironmentSpawnerNamespace
 
             if (hit != Vector3.zero)
             {
-
                 // Создаём объект --- Creating an object
                 var obj = Instantiate(prefab, hit, Quaternion.identity, parent != null ? parent : transform);
 
                 obj.name = prefab.name;
                 if (addIdToName) obj.name += $"_{obj.GetInstanceID()}";
 
-                // Поворот --- rotation
-                float yRot = Random.Range(rotationRange.x, rotationRange.y);
-                obj.transform.Rotate(xAngle, yRot, obj.transform.rotation.z);
+                obj.transform.Rotate(xAngle, yRot, 0);
 
                 obj.transform.localScale = obj.transform.localScale * scale;
 
@@ -121,6 +120,7 @@ namespace EnvironmentSpawnerNamespace
                 return null;
             }
         }
+       
         private object FindingAFreePlaceForAnObject(GameObject prefab, float scale)
         {
             // Луч вниз
@@ -157,11 +157,13 @@ namespace EnvironmentSpawnerNamespace
         private Vector3 GetPrefabBounds(GameObject prefab)
         {
             Renderer rend = prefab.GetComponent<Renderer>();
-            Collider col = prefab.GetComponent<Collider>();
             if (rend != null)
                 return rend.bounds.size;
-            else
+            else 
+            {
+                Collider col = prefab.GetComponent<Collider>();
                 return col.bounds.size;
+            }
 
                // return Vector3.one; // если нет рендера
         }
